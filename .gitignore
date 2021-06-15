@@ -1,0 +1,4 @@
+
+build/*
+.sconsign.dblite
+ux0_serial
