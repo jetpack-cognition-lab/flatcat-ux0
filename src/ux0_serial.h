@@ -6,41 +6,58 @@
  +---------------------------------*/
 
 #include <signal.h>
+#include <bitset>
 
 #include <common/log_messages.h>
 #include <common/basic.h>
 #include <common/globalflag.h>
 #include <common/modules.h>
 #include <common/stopwatch.h>
+#include <common/timer.h>
+#include <common/datalog.h>
 
 #include <motorcord.hpp>
 #include <sensorimotor.hpp>
 
 
-/*
+
 class Motor_Log : public Loggable<768> {
 
-    supreme::motorcord0 const& motors;
+    supreme::motorcord const& motors;
+
+    std::string replace_index(std::string str, uint8_t idx) {
+       for (auto &s : str) {
+           if (s == '?') s = std::to_string(idx).at(0);
+       }
+       return str;
+    }
 
 public:
-    Motor_Log(supreme::motorcord0 const& motors) : motors(motors) {}
+    std::string header_template = " vol?__ pos?__ cur?__ sup? tmp?";
+
+    Motor_Log(supreme::motorcord const& motors) : motors(motors) {}
+
+    std::string header(void) {
+        std::string result = "";
+        for (std::size_t i = 0; i < motors.size() -1; ++i) //TODO w/o battery module
+            result.append(replace_index(header_template, i));
+        return result;
+    }
 
     const char* log()
     {
-        for (std::size_t i = 0; i < motors.size(); ++i) {
+        for (std::size_t i = 0; i < motors.size() -1 /* "-1"=TODO*/; ++i) {
             auto const& m = motors[i];
-            append( " %+e %+e %+e %+e %+e %+e %+e"
+            append( " %+5.3f %+5.3f %+5.3f %4.2f %04.1f"
                   , m.get_data().output_voltage
                   , m.get_data().position
-                  , m.get_data().velocity
                   , m.get_data().current
-                  //, m.get_data().voltage_backemf
                   , m.get_data().voltage_supply
                   , m.get_data().temperature );
         }
         return done();
     }
-};*/
+};
 
 enum StatusBits : uint8_t
 {
@@ -62,53 +79,58 @@ enum StatusBits : uint8_t
 //	reserved_15         = 15,
 };
 
+namespace constants {
+    const float update_rate_Hz = 100.0f;
+    const unsigned us_per_sec = 1000000;
+}
+
 class MainApplication
 {
 public:
-    MainApplication(int /*argc*/, char** /*argv*/)
-    : motors(4, 100.0f, false)
+    MainApplication(int argc, char** argv)
+    : motors(4, constants::update_rate_Hz, false)
     , battery(motors[3])
-//    , motors_log(motors)
+    , timer( static_cast<uint64_t>(constants::us_per_sec/constants::update_rate_Hz), /*enable=*/true )
+    , motors_log(motors)
+    , logger(argc, argv)
     {
-        //motors[2].set_phi_disable(1.0);
-        //motors[0].set_voltage_limit(1.0);
-        //motors[0].set_phi_disable(1.0);
-
-        // settings for blue motor
         for (unsigned i = 0; i < 3; ++i) {
-            motors[i].set_voltage_limit(0.34);
-            //motors[i].set_disable_position_limits(-0.7,0.7);
-            //motors[i].set_csl_limits(-0.45,0.45);
-
+            motors[i].set_voltage_limit(0.30);
             motors[i].set_disable_position_limits(-0.9,0.9);
             motors[i].set_csl_limits(-0.9,0.9);
 
-            motors[i].set_target_csl_fb(1.006);
-            motors[i].set_target_csl_gain(2.0);
-            motors[i].set_target_csl_mode(1.0); // TODO enable csl, set mode to 1
+            motors[i].set_target_csl_fb(1.017);
+            motors[i].set_target_csl_gain(2.2);
+            motors[i].set_target_csl_mode(1.0);
             motors[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
 
         }
-        //motors[0].set_loop_gain(3.0);
-        //motors[1].set_loop_gain(3.0);
-
         battery.set_voltage_limit(1.0);
+
+        if (logger.is_enabled())
+            logger.log("Statusflags_____ TL S Ubat_ Ubus_%s", motors_log.header().c_str());
     }
 
     bool execute_cycle();
     void finish() { sts_msg("bb flat"); };
 
 private:
-    supreme::motorcord   motors;
-    supreme::sensorimotor& battery;
 
-    /* Logging */
-    //Motor_Log             motors_log;
+    supreme::motorcord      motors;
+    supreme::sensorimotor&  battery;
+    SimpleTimer             timer;
+    Motor_Log               motors_log;
+    Datalog                 logger;
 
     unsigned long cycles = 0;
 
     float avg_Umot = 0.0;
     float avg_Ubus = 0.0;
-    bool user_enable = false;
+    float csl_mode = 0.5;
+
+    bool inhibited = false;
+    bool user_pause = false;
+    bool user_button_pressed = false;
+    bool user_button_released = false;
 };
 

@@ -1,6 +1,5 @@
 #include "./ux0_serial.h"
 #include <unistd.h>
-//#include <sys/reboot.h>
 
 /* framework */
 #include <common/modules.h>
@@ -11,7 +10,7 @@ GlobalFlag do_quit;
 void
 signal_terminate_handler(int signum)
 {
-    sts_msg("Got a SIGINT(%d) from user\n", signum);
+    sts_msg("Got a signal(%d) from user\n", signum);
     do_quit.enable();
 }
 
@@ -19,9 +18,6 @@ bool
 MainApplication::execute_cycle(void)
 {
     motors.execute_cycle();
-    /* data logging */
-    //if (logger.is_enabled())
-    //    logger.log("%llu%s", cycles, motors_log.log());
 
     /* get energymodule's data */
     auto const& data = battery.get_data().raw_recv;
@@ -32,6 +28,8 @@ MainApplication::execute_cycle(void)
     uint8_t ttlive = data[4];
     uint8_t status = data[5];
     uint16_t flags = data[6]*256 + data[7];
+    std::string flag_str = std::bitset<sizeof(flags) * 8>(flags).to_string();
+
 
     /* get motors' data */
     float Umot = std::min( motors[0].get_data().voltage_supply,
@@ -42,6 +40,16 @@ MainApplication::execute_cycle(void)
     avg_Umot = 0.99f * avg_Umot + 0.01f * Umot;
     avg_Ubus = 0.99f * avg_Ubus + 0.01f * Ubus;
 
+
+    if (flags & (1 << button_pressed)) {
+        user_button_pressed = true;
+        user_button_released = false;
+    }
+    else if (user_button_pressed)
+    {
+        user_button_pressed = false;
+        user_button_released = true;
+    }
 
     /*
     float Im = .0f;
@@ -66,7 +74,9 @@ MainApplication::execute_cycle(void)
 
     /* print on terminal each second */
     if (cycles % 100 == 0)
-        sts_msg("Ubat=%4.2f Ubus=%4.2f Umot=%4.2f T=%02u S=%s F=%x U=%s", Ubat, avg_Ubus, avg_Umot, ttlive, status_str.c_str(), flags, user_enable? "ENA" : "INH");
+        sts_msg("Ubat=%4.2f Ubus=%4.2f Umot=%4.2f T=%02u S=%s F=%s %s"
+               , Ubat, avg_Ubus, avg_Umot, ttlive, status_str.c_str()
+               , flag_str.c_str(), user_pause? "PAUSED" : "ACTIVE");
 
     /* set tones for all motors */
     for (std::size_t i = 0; i < motors.size()-1; ++i) if (motors[i].is_active())
@@ -83,30 +93,57 @@ MainApplication::execute_cycle(void)
     /* check charger */
     if (flags & (1 << StatusBits::charger_connected)) { // charger connected = standby bus power
         motors.disable_all();
-        user_enable = false;
+        inhibited = true;
     }
     else {
         battery.set_controller_type(supreme::sensorimotor::Controller_t::voltage);
-        battery.set_target_voltage(1.0);
-        user_enable = true;
+        battery.set_target_voltage(1.0); // TODO set this level lower according to battery life
+        inhibited = false;
+
+        if (user_button_released)
+            user_pause = !user_pause;
     }
 
     /* check motors's voltage */
-    if (avg_Umot < 4.75) motors.disable_all();
-    else if (avg_Umot > 5.8) {
-        for (std::size_t i = 0; i < motors.size()-1; ++i)
+    if (avg_Umot < 4.6) motors.disable_all();
+    else if (avg_Umot < 4.8 or user_pause) {
+	for (std::size_t i = 0; i < motors.size()-1; ++i) {
             motors[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
+            csl_mode += 0.005*(0.5 - csl_mode);
+            motors[i].set_target_csl_mode(csl_mode); // release mode
+        }
+    }
+    else if (avg_Umot > 5.8) {
+        for (std::size_t i = 0; i < motors.size()-1; ++i) {
+            motors[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
+            csl_mode += 0.01*(1.0 - csl_mode);
+            motors[i].set_target_csl_mode(1.0); // contraction mode
+        }
     }
 
+    ++cycles;
+
+    /* data logging */
+    if ((cycles % 100 == 0) and logger.is_enabled())
+        logger.log("%s %02u %u %5.3f %5.3f%s"
+                  , flag_str.c_str(), ttlive, status, Ubat, Ubus, motors_log.log()); //TODO: timestamp?
+
+    if (cycles % 360000 == 0) // each hour
+        logger.next();
+
     /* emergency shutdown */
-    if (ttlive < 5) {
-        sts_msg("Energymodule is notifying us to shutdown power soon.");
+    if (ttlive < 5 or Ubat < 2.7) {
+        sts_msg("Shutdown flatcat due to %s", (ttlive < 5) ? "battery module notification" : "unexpected power fail");
+        sts_msg("Last measurements: Ubat=%4.2f Ubus=%4.2f T=%02u F=%s"
+               , Ubat, Ubus, ttlive, flag_str.c_str());
         motors.disable_all();
         motors.execute_cycle(); // update motors before quitting
         return false;
     }
 
-    ++cycles;
+    while(!timer.check_if_timed_out_and_restart())
+        usleep(100);
+
     return true;
 }
 
@@ -138,7 +175,6 @@ int main(int argc, char* argv[])
             sync();
             sts_msg("DONE.");
             sts_msg("________\nSHUTDOWN");
-            //reboot(RB_POWER_OFF);
             system("sudo shutdown -h now");
             return EXIT_FAILURE;
         }
