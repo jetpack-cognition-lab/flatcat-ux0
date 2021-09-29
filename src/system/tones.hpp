@@ -1,6 +1,8 @@
 #ifndef TONETABLE_H
 #define TONETABLE_H
 
+namespace supreme {
+
 /*---------------------------------+
  | Matthias Kubisch                |
  | kubisch@informatik.hu-berlin.de |
@@ -100,5 +102,7 @@ float tonetable[89] = {
 /* 87 | B7      | h4         */ ,3951.07
 /* 88 | C8      | c5         */ ,4186.01
 };
+
+} /* namespace supreme */
 
 #endif /* TONETABLE_H */

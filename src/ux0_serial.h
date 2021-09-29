@@ -2,12 +2,16 @@
  | Matthias Kubisch                |
  | kubisch@informatik.hu-berlin.de |
  | Flatcat2                        |
- | Feb 2021                        |
+ | Juli 7th 2021                   |
  +---------------------------------*/
 
+/* standard library */
+#include <unistd.h>
 #include <signal.h>
 #include <bitset>
+#include <experimental/filesystem>
 
+/* framework */
 #include <common/log_messages.h>
 #include <common/basic.h>
 #include <common/globalflag.h>
@@ -16,121 +20,124 @@
 #include <common/timer.h>
 #include <common/datalog.h>
 
+/* libsensorimotor */
 #include <motorcord.hpp>
 #include <sensorimotor.hpp>
 
+/* flatcat */
+#include "system/robot.hpp"
+#include "system/control.hpp"
+#include "system/settings.hpp"
+#include "system/actions.hpp"
+#include "system/logging.hpp"
+#include "system/communication.hpp"
+
+#include "learning/learning.hpp"
 
 
-class Motor_Log : public Loggable<768> {
+namespace supreme {
 
-    supreme::motorcord const& motors;
 
-    std::string replace_index(std::string str, uint8_t idx) {
-       for (auto &s : str) {
-           if (s == '?') s = std::to_string(idx).at(0);
-       }
-       return str;
-    }
-
+class ButtonPauseStatus {
+    bool state = false;
+    bool pressed = false;
+    bool paused = false;
 public:
-    std::string header_template = " vol?__ pos?__ cur?__ sup? tmp?";
 
-    Motor_Log(supreme::motorcord const& motors) : motors(motors) {}
-
-    std::string header(void) {
-        std::string result = "";
-        for (std::size_t i = 0; i < motors.size() -1; ++i) //TODO w/o battery module
-            result.append(replace_index(header_template, i));
-        return result;
-    }
-
-    const char* log()
+    bool execute_cycle(bool s)
     {
-        for (std::size_t i = 0; i < motors.size() -1 /* "-1"=TODO*/; ++i) {
-            auto const& m = motors[i];
-            append( " %+5.3f %+5.3f %+5.3f %4.2f %04.1f"
-                  , m.get_data().output_voltage
-                  , m.get_data().position
-                  , m.get_data().current
-                  , m.get_data().voltage_supply
-                  , m.get_data().temperature );
-        }
-        return done();
+        bool state = s;
+	    if (pressed and !state) {
+		    if (paused) {
+			    paused = false;
+		    } else {
+			    paused = true;
+		    }
+	    }
+	    pressed = state;
+        return paused;
     }
-};
 
-enum StatusBits : uint8_t
-{
-	button_pressed      =  0,
-	charger_connected   =  1,
-	battery_charging    =  2,
-	limiter_fault       =  3,
-	vbus_charging       =  4,
-	no_battery_inserted =  5,
-//	reserved_6          =  6,
-	shutdown_initiated  =  7,
-	vbat_ov_warning     =  8,
-	vbat_uv_warning     =  9,
-	vbat_uv_error       = 10,
-	vbus_ov_warning     = 11,
-	vbus_uv_warning     = 12,
-//	reserved_13         = 13,
-//	reserved_14         = 14,
-//	reserved_15         = 15,
+    bool is_paused(void) const { return paused; }
 };
-
-namespace constants {
-    const float update_rate_Hz = 100.0f;
-    const unsigned us_per_sec = 1000000;
-}
 
 class MainApplication
 {
 public:
-    MainApplication(int argc, char** argv)
-    : motors(4, constants::update_rate_Hz, false)
-    , battery(motors[3])
-    , timer( static_cast<uint64_t>(constants::us_per_sec/constants::update_rate_Hz), /*enable=*/true )
-    , motors_log(motors)
+    MainApplication(int argc, char** argv, GlobalFlag& exitflag)
+    : settings(argc, argv)
+    , exitflag(exitflag)
+    , robot(settings)
+    , control(robot, settings)
+    , timer( static_cast<uint64_t>(constants::us_per_sec/settings.update_rate_Hz), /*enable=*/true )
+    , motors_log(robot.motorcord)
     , logger(argc, argv)
+    , learning(robot, control, settings)
+    , com(robot, settings, exitflag, learning)
+    , watch()
+    , button()
     {
-        for (unsigned i = 0; i < 3; ++i) {
-            motors[i].set_voltage_limit(0.30);
-            motors[i].set_disable_position_limits(-0.9,0.9);
-            motors[i].set_csl_limits(-0.9,0.9);
 
-            motors[i].set_target_csl_fb(1.017);
-            motors[i].set_target_csl_gain(2.2);
-            motors[i].set_target_csl_mode(1.0);
-            motors[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
+        if (std::experimental::filesystem::exists(settings.save_folder)) {
+            if (settings.clear_state) {
+                wrn_msg("Overriding state: %s", settings.save_state_name.c_str());
+                save(settings.save_folder);
 
+            } else
+                load(settings.save_folder);
         }
-        battery.set_voltage_limit(1.0);
+        else {
+            basic::make_directory(settings.save_folder.c_str());
+            save(settings.save_folder);
+        }
 
         if (logger.is_enabled())
-            logger.log("Statusflags_____ TL S Ubat_ Ubus_%s", motors_log.header().c_str());
+            logger.log("Time_ms_____ Statusflags_____ TL S Ubat_ Ubus_%s", motors_log.header().c_str());
+
     }
 
+    void finish() {
+        exitflag.enable();
+        sts_msg("bb flat");
+    };
+
     bool execute_cycle();
-    void finish() { sts_msg("bb flat"); };
+    void learning_cycle(void);
+
+    void save(std::string f) {
+        sts_msg("Saving state: %s", settings.save_state_name.c_str());
+        learning.save(f);
+    }
+
+    void load(std::string f) {
+        sts_msg("Loading state: %s", settings.save_state_name.c_str());
+        learning.load(f);
+    }
 
 private:
+    FlatcatSettings             settings;
+    GlobalFlag&                 exitflag;
 
-    supreme::motorcord      motors;
-    supreme::sensorimotor&  battery;
-    SimpleTimer             timer;
-    Motor_Log               motors_log;
-    Datalog                 logger;
+    /* robot baseline */
+    FlatcatRobot                robot;
+    FlatcatControl              control;
+    SimpleTimer                 timer;
+    Motor_Log                   motors_log;
+    Datalog                     logger;
+    FlatcatLearning             learning;
+    FlatcatCommunication        com;
+
+    Stopwatch                   watch;
+    ButtonPauseStatus           button;
+
 
     unsigned long cycles = 0;
 
-    float avg_Umot = 0.0;
-    float avg_Ubus = 0.0;
-    float csl_mode = 0.5;
-
     bool inhibited = false;
-    bool user_pause = false;
-    bool user_button_pressed = false;
-    bool user_button_released = false;
+    bool paused = false;
+
+
 };
+
+} /* namespace supreme */
 
