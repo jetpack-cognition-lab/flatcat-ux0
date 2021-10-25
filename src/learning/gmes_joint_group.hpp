@@ -23,7 +23,7 @@ public:
         sensors.emplace_back("[2] angle cos", [&joint](){ return -cos(M_PI*joint.s_ang); });
         sensors.emplace_back("[3] torque"   , [&joint](){ return 4*joint.motor.get();    });//don't even think of removing that
         sensors.emplace_back("[4] velocity" , [&joint](){ return joint.s_vel; });
-        sensors.emplace_back("[5] voltage"  , [&joint](){ return joint.s_vol; });
+        sensors.emplace_back("[5] voltage"  , [&joint](){ return joint.s_vol; }); //TODO check, is this the motor measured voltage?
     }
 };
 

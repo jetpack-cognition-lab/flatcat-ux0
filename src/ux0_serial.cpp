@@ -13,7 +13,6 @@ signal_terminate_handler(int signum)
 
 /* TODO list
     + set voltage level lower according to battery life
-    + include motor voltage into state learning
 */
 
 namespace supreme {
@@ -29,9 +28,11 @@ MainApplication::execute_cycle(void)
 
 	/* print on terminal each second */
 	if (cycles % 100 == 0)
-		sts_msg("Ubat=%4.2f Ubus=%4.2f Umot=%4.2f T=%02u S=%s F=%s %s"
-		       , status.Ubat, status.Ubus, status.Umot, status.ttlive, status.state_str.c_str()
-		       , status.flag_str.c_str(), inhibited? "INH" : "ACT");
+		sts_msg("Ub=%4.2f Uc=%4.2f Um=%4.2f I=%5.1f T=%02u S=%s E=%u T=%u F=%s %s C=%3.1f"
+		       , status.Ubat, status.Ubus, status.Umot, status.Ilim, status.ttlive, status.state_str.c_str()
+               , status.motorcord.errors, status.motorcord.timeouts
+		       , status.flag_str.c_str(), inhibited? "INH" : "ACT"
+                , control.csl_cur_mode[0]);
 
 	/* set tones for all motors */
     control.set_motor_voice();
@@ -79,8 +80,9 @@ MainApplication::execute_cycle(void)
 
 
 	/* emergency shutdown */
-	if (status.ttlive < 5 or status.Ubat < 2.7) {
-		sts_msg("Shutdown flatcat due to %s", (status.ttlive < 5) ? "battery module notification" : "unexpected power fail");
+    bool is_shutdown_signaled = status.ttlive < 10;
+	if (is_shutdown_signaled or status.Ubat < 2.7) {
+		sts_msg("Shutdown flatcat due to %s", is_shutdown_signaled ? "BMS notified shutdown" : "unexpected power fail");
 		sts_msg("Last measurements: Ubat=%4.2f Ubus=%4.2f T=%02u F=%s"
 		       , status.Ubat, status.Ubus, status.ttlive, status.flag_str.c_str());
 		robot.motorcord.disable_all();

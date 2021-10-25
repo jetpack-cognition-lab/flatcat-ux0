@@ -45,12 +45,17 @@ public: //TODO undo "all public"
         float Umot = 5.0f;
         float Ubus = 5.0f;
         float Ubat = 3.6f;
+        float Ilim = 0.0f;
         float Imot = 0.0f;
         uint8_t ttlive = 10;
         uint8_t state = 0;
         uint16_t flags = 0;
         std::string flag_str = "";
         std::string state_str = "";
+        struct MotorcordStatus_t {
+            unsigned errors = 0;
+            unsigned timeouts = 0;
+        } motorcord;
     } status;
 
     enum StatusBits : uint8_t
@@ -145,6 +150,10 @@ public:
     {
         //TODO: write_motorcord();          /* write motors     */
         motorcord.execute_cycle();  /* read motor cord  */
+
+        status.motorcord.errors   = motorcord.get_errors();
+        status.motorcord.timeouts = motorcord.get_timeouts();
+
         read_motorcord();           /* read sensors     */
         return true;
     }
@@ -221,10 +230,12 @@ private:
         auto const& dat = battery.get_data().raw_recv;
 
         /* battery/charger voltage */
-        float Ubat = (dat[0]*256 + dat[1]) * 0.004262673; // TODO report voltage normed in mV
+        float Ubat = (dat[0]*256 + dat[1]) * 0.0001f; //.1 mV to V
 
         /* bus voltage measured by energymodule */
-        float Ubus = (dat[2]*256 + dat[3]) * 0.006451613;
+        float Ubus = (dat[2]*256 + dat[3]) * 0.0001f; //.1 mV to V
+
+        float Ilim = (dat[4]*256 + dat[5]) * 0.1f;    //.1 mA to mA
 
         /* sum of motor currents */
         float Imot = motorcord[0].get_data().current
@@ -236,10 +247,11 @@ private:
         status.Ubus = 0.99f * status.Ubus + 0.01f * Ubus;
         status.Ubat = 0.99f * status.Ubat + 0.01f * Ubat;
         status.Imot = 0.99f * status.Imot + 0.01f * Imot;
+        status.Ilim = 0.99f * status.Ilim + 0.01f * Ilim;
 
-        status.ttlive   = dat[4];
-        status.state    = dat[5];
-        status.flags    = dat[6]*256 + dat[7];
+        status.ttlive   = dat[6];
+        status.state    = dat[7];
+        status.flags    = dat[8]*256 + dat[9];
         status.flag_str = std::bitset<sizeof(status.flags) * 8>(status.flags).to_string();
 
         /* get battery module status */

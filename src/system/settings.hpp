@@ -42,15 +42,16 @@ public:
 
 
     const float update_rate_Hz = 100.0f;
-    const float voltage_disable_motors = 4.6; // h-bridges disable themselves at 4V5
+    const float voltage_disable_motors = 4.7; // h-bridges disable themselves at approx. 4V5
+    const float voltage_regenerate_lo  = 4.8;
+    const float voltage_regenerate_hi  = 5.5; // TODO lower this value
     const float normed_active_bus_voltage = 1.0;
-    const float voltage_regenerate_lo = 4.8;
-    const float voltage_regenerate_hi = constants::max_bus_voltage * normed_active_bus_voltage - 0.2;
 
     /* CSL motor control */
-    float motor_voltage_limit = 0.35;
-    float motor_csl_param_gf = 1.017;
+    float motor_voltage_limit = 0.5; // in %
+    float motor_csl_param_gf = 1.00;
     float motor_csl_param_gi = 1.5;
+    unsigned motor_pwm_frequency = 22500;
 
 
     VectorN joint_offsets;
@@ -67,6 +68,7 @@ public:
     bool clear_state;
 
 
+
     /* gmes */
     struct GMES_Settings_t {
         unsigned number_of_experts = 64;
@@ -76,13 +78,17 @@ public:
     } gmes;
 
     FlatcatSettings(int argc, char **argv)
-    : Settings_Base       (argc, argv                          , defaults::settings_filename.c_str())
-    , motor_voltage_limit (read_float("motor_voltage_limit"    , motor_voltage_limit               ))
-    , motor_csl_param_gf  (read_float("motor_csl_param_gf"     , motor_csl_param_gf                ))
-    , motor_csl_param_gi  (read_float("motor_csl_param_gi"     , motor_csl_param_gi                ))
-    , joint_offsets       (read_vec  ("joint_offsets"          , defaults::joint_offsets           ))
-    , save_state_name     (read_string_option(argc, argv, "-n", "--name", "default"                ))
-    , clear_state         (read_option_flag  (argc, argv, "-c", "--clear"                          ))
+    : Settings_Base         (argc, argv                          , defaults::settings_filename.c_str())
+    , voltage_disable_motors(read_float("voltage_disable_motors" , voltage_disable_motors            ))
+    , voltage_regenerate_lo (read_float("voltage_regenerate_lo"  , voltage_regenerate_lo             ))
+    , voltage_regenerate_hi (read_float("voltage_regenerate_hi"  , voltage_regenerate_hi             ))
+    , motor_voltage_limit   (read_float("motor_voltage_limit"    , motor_voltage_limit               ))
+    , motor_csl_param_gf    (read_float("motor_csl_param_gf"     , motor_csl_param_gf                ))
+    , motor_csl_param_gi    (read_float("motor_csl_param_gi"     , motor_csl_param_gi                ))
+    , motor_pwm_frequency   (read_uint ("motor_pwm_frequency"    , motor_pwm_frequency               ))
+    , joint_offsets         (read_vec  ("joint_offsets"          , defaults::joint_offsets           ))
+    , save_state_name       (read_string_option(argc, argv, "-n", "--name", "default"                ))
+    , clear_state           (read_option_flag  (argc, argv, "-c", "--clear"                          ))
     {
         save_folder += save_state_name + "/";
     }
