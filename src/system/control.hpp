@@ -138,12 +138,14 @@ public:
 		    auto& m = robot.motorcord[i];
 		    auto const& data = m.get_data();
 
+
 		    if (csl_cur_mode[i] > .9
 		    and fabs(data.output_voltage) > 0.01
 		    and fabs(data.output_voltage) < 0.02)
 			    m.set_pwm_frequency(tonetable[3*i+2]);
-		    else
+		    else {
 			    m.set_pwm_frequency(settings.motor_pwm_frequency-i*1000);
+            }
 	    }
     }
 
