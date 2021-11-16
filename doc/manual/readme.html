@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.12">
+<meta name="author" content="Doc Writer">
+<link rel="icon" type="image/png" href="./img/icons/favicon.png">
+<title>flatcat Handbuch</title>
+<style>
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+
+@import url("//fonts.googleapis.com/css?family=Noto+Sans:300,600italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700");
+@import url(https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css); /* Default asciidoc style framework - important */
+
+/* CUSTOMISATIONS */
+/* Change the values in root for quick customisation. If you want even more fine grain... venture further. */
+
+:root{
+--maincolor:#FFFFFF;
+--primarycolor:#2c3e50;
+--secondarycolor:#323e4a;
+--tertiarycolor: #186d7a;
+--sidebarbackground:#CCC;
+--linkcolor:#ce00ce;
+--linkcoloralternate:#4e6074ff;
+--white:#FFFFFF;
+--black:#000000;
+}
+
+/* Text styles */
+h1{color:var(--primarycolor) !important;}
+h2,h3,h4,h5,h6{color:var(--secondarycolor) !important;}
+.title{color:var(--tertiarycolor) !important; font-family:"Noto Sans",sans-serif !important;font-style: normal !important; font-weight: normal !important;}
+p{font-family: "Noto Sans",sans-serif !important}
+
+
+ /* unvisited link */
+a:link { color: var(--primarycolor) !important; }
+
+/* visited link */
+a:visited { color: var(--linkcoloralternate) !important; }
+
+/* mouse over link */
+a:hover { color: var(--linkcolor) !important; }
+
+/* Table styles */
+th{font-family: "Noto Sans",sans-serif !important}
+
+/* Responsiveness fixes */
+video {
+  max-width: 100%;
+}
+
+@media all and (max-width: 600px) {
+table {
+  width: 55vw!important;
+  font-size: 3vw;
+}
+
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>flatcat Handbuch</h1>
+<div class="details">
+<span id="author" class="author">Doc Writer</span><br>
+<span id="email" class="email"><a href="mailto:matthias.kubisch@mailbox.org">matthias.kubisch@mailbox.org</a></span><br>
+<span id="revnumber">version 0.1,</span>
+<span id="revdate">2021-11-16</span>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>For an English Version of this manual follow <a href="https://gitlab.com/jetpack/flatcat/manual_en">this link</a>.</em></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./img/foto.jpg" alt="foto" width="50%"></span></p>
+</div>
+<div class="paragraph">
+<p>Willkommen im Benutzungshandbuch Deiner <em>flatcat</em>. Dieses Dokument macht Dich mit den wichtigsten Funktionen Deines elektronischen Haustiers vertraut, erklärt den bevorzugten Umgang und gibt Hinweise zur Pflege und Wartung.</p>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle" class="title">Inhalt</div>
+<ul class="sectlevel1">
+<li><a href="#_funktionen">Funktionen</a>
+<ul class="sectlevel2">
+<li><a href="#wake_up">Aufwecken</a></li>
+<li><a href="#pause_mode">Ruhemodus</a></li>
+<li><a href="#sleep_mode">Schlafmodus</a></li>
+</ul>
+</li>
+<li><a href="#charge_batteries">Batterien Laden</a>
+<ul class="sectlevel2">
+<li><a href="#connect_charger">Lade-Adapter verbinden</a></li>
+<li><a href="#_wichtige_hinweise_zum_aufladen">Wichtige Hinweise zum Aufladen</a></li>
+<li><a href="#change_batteries">Batterien tauschen</a></li>
+</ul>
+</li>
+<li><a href="#connect_wifi">Funkverbindung aufbauen</a></li>
+<li><a href="#update_software">Software aktualisieren</a></li>
+<li><a href="#settings">Einstellungen vornehmen</a></li>
+<li><a href="#cleaning">Reinigung</a>
+<ul class="sectlevel2">
+<li><a href="#remove_fur">Fell ausziehen</a></li>
+<li><a href="#washing">Waschen</a></li>
+<li><a href="#drying">Trocknen</a></li>
+<li><a href="#put_on_fur">Fell anziehen</a></li>
+</ul>
+</li>
+<li><a href="#maintenance">Wartung</a></li>
+<li><a href="#faq">Häufige Fragen</a>
+<ul class="sectlevel3">
+<li><a href="#_meine_flatcat_ist_nass_geworden_was_muss_ich_tun">Meine <em>flatcat</em> ist nass geworden, was muss ich tun?</a></li>
+<li><a href="#_woraus_besteht_das_fell_meiner_flatcat">Woraus besteht das Fell meiner <em>flatcat</em>?</a></li>
+<li><a href="#_meine_flatcat_lässt_sich_nicht_einschalten_was_kann_ich_tun">Meine _flatcat_lässt sich nicht einschalten, was kann ich tun?</a></li>
+<li><a href="#_meine_flatcat_ist_heruntergefallen_wie_kann_ich_schauen_ob_es_ihr_gut_geht">Meine <em>flatcat</em> ist heruntergefallen, wie kann ich schauen ob es ihr gut geht?</a></li>
+<li><a href="#_wo_finde_ich_die_seriennummer_meiner_flatcat">Wo finde ich die Seriennummer meiner <em>flatcat</em>?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_funktionen">Funktionen</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="wake_up">Aufwecken</h3>
+<div class="paragraph">
+<p>Suche Dir eine sichere Position für Deine <em>flatcat</em> z.B. auf dem Teppich oder auf einer größeren Sofafläche. Kurz nach dem Aufwecken fängt Deine <em>flatcat</em> an sich zu bewegen.</p>
+</div>
+<div class="paragraph">
+<p><em>flatcats</em> lieben es auf dem Schoß oder im Arm gehalten zu werden. Sorge für eine sichere Umgebung, wenn Du Deine <em>flatcat</em> aufwecken möchtest. Lasse sie nicht unbeaufsichtigt.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Wecke Deine <em>flatcat</em> nie von einer erhöhten, unsicheren Position aus auf. Sie könnte abstürzen und sich etwas brechen.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Um Deine <em>flatcat</em> aufzuwecken musst Du den <code>START</code>-Knopf ca. 1 Sekunden lang drücken. Dieser befindet sich im hinteren Segment linksseitig neben dem Jetpack-Label. Dort befindet sich eine kleine Öffnung im Fell. Ertaste die Öffnung im Fell mit den Fingespitzen und ziehe sie leicht auseinander. Du kannst nun einen kleinen, ca 3x4mm großen, orange-farbenen Knopf erkennen. Drücke den <code>START</code>-Knopf und warte ca. 20 Sekunden. Ähnlich wie bei einem Smartphone oder Tablet-Computer befindet sich in jeder <em>flatcat</em> ein Linux-Computer. Dieser benötigt einige Sekunden zum booten. Wenn Deine <em>flatcat</em> aufgewacht ist beginnt Sie damit sich zu bewegen oder liegt manchmal noch etwas ruhig da, bis sie leicht berührt oder angestubst wird.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="pause_mode">Ruhemodus</h3>
+<div class="paragraph">
+<p>Im Ruhemodus bleibt Deine <em>flatcat</em> stehts still liegen. Ein kurzer Druck auf den <code>START</code>-Knopf oder das Anstecken des Lade-Adapters versetzt Deine <em>flatcat</em> in den Ruhemodus.</p>
+</div>
+<div class="paragraph">
+<p>Wenn Du den Lade-Adapter wieder abziehst wird der Ruhemodus beendet und Deine <em>flatcat</em> bewegt sich wieder. Gleiches gilt für ein erneutes kurzes Drücken des Start-Knopfes, wenn dieser benutzt wurde, um den Ruhemodus zu aktivieren.</p>
+</div>
+<div class="paragraph">
+<p>Nach ca. 15 Minuten im Ruhemodus geht Deine <em>flatcat</em> automatisch in den Schlafmodus.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sleep_mode">Schlafmodus</h3>
+<div class="paragraph">
+<p>Um Deine <em>flatcat</em> in den Schlafmodus zu versetzen halte  den <code>START</code>-Knopf ca. 3-4 Sekunden lang gedrückt. Deine <em>flatcat</em> hört auf sich zu bewegen und fährt das System herunter, entläd die Puffer-Kondensatoren und schaltet sich aus.</p>
+</div>
+<div class="paragraph">
+<p>Warte mindestens eine Minute bis Du Deine <em>flatcat</em> erneut einschaltest.</p>
+</div>
+<div class="paragraph">
+<p>Wenn die Batterien zu schwach geworden sind. Geht Deine <em>flatcat</em> automatisch in den Schlafmodus. Meist erkennst Du es aber bereits vorher am Verhalten, dass die Batterien geladen werden müssen. Sie ist dann nicht mehr so aktiv und bewegt sich seltener und etwas kraftloser.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="charge_batteries">Batterien Laden</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Deine <em>flatcat</em> hat wiederaufladbare Lithium-Ionen Batterien ("Akkus"), welche bei guter Pflege unzählige Male wieder aufgeladen werden können und in der Regel nicht getauscht werden müssen. Lies den Abschnitt <a href="#change_batteries">Batterien tauschen</a> wenn Du dennoch den Eindruck hast, dass sie getauscht werden müssten.</p>
+</div>
+<div class="sect2">
+<h3 id="connect_charger">Lade-Adapter verbinden</h3>
+<div class="paragraph">
+<p>Um Deine <em>flatcat</em> zu Laden verbinde sie mit dem beigelegten Lade-Adapter. Der Stecker zur <em>flactat</em> ist vom Typ <code>USB-Type C</code>. Verbinde den Lade-Adapter mit einer Haussteckdose (110&#8201;&#8212;&#8201;240 V~)</p>
+</div>
+<div class="paragraph">
+<p>In der Regel kannst Du hierfür auch andere <code>USB-Type C</code> Lade-Adapter verwenden, falls diese bereits für Dein Smartphone oder Notebook verfügbar sind. Jedes <code>USB-Type C</code> kompatible Ladegerät mit mind. 1.5A (5V) Ladestrom ist geeignet. Der Ladeport befindet sich im letzen Segment linksseitig nebem dem Jetpack-Label (unmittelbar neben dem <code>Start</code>-Knopf).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_wichtige_hinweise_zum_aufladen">Wichtige Hinweise zum Aufladen</h3>
+<div class="paragraph">
+<p>Die Kapazität der <em>flatcat</em>-Batterien beträgt rund 10Ah (Ampere-Stunden) bei nominal 3,6 Volt Spannung. Bei voller Ladung und mäßiger Benutzung sollte eine Laufzeit von 5-8 Stunden erreichbar sein.</p>
+</div>
+<div class="paragraph">
+<p>Lade Deine <em>flatcat</em> am Besten z.B. nachts, bzw. wenn Du es einige Stunden nicht verwenden möchtest. Die Ladung erfolgt ungefähr mit der gleichen Geschwindigkeit wie die vorherige Entladung, um die Batterien zu schonen und eine möglichst lange Lebensdauer zu erreichen. Langsames Aufladen ermöglicht den Batterien mehr Ladezyklen zu erleben. Eine vollständige Ladung dauert dementsprechend je nach Entladungstiefe auch ca. 5-8 Stunden.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="change_batteries">Batterien tauschen</h3>
+<div class="paragraph">
+<p>Die drei verbauten Lithium-Ionen-Zellen sind im hinteren Segment Deiner <em>flatcat</em> verbaut aber nicht fest verlötet. Sollten die Zellen nach einigen Jahren häufiger Verwendung dennoch ersetzt werden müssen können diese vergleichsweise einfach ausgebaut und getauscht werden. Nimm dazu bitte unbedingt zu uns Kontakt auf und führe den Tausch nicht ohne triftigen Grund eigenmächtig durch. Der verwendete Zelltyp ist <code>Panasonic NCR18650B PCB Protected</code> mit 3400 mAh (12,24Wh).</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Lithuim-Ionen Batterien können bei Kurzschluss sehr hohe Ströme erzeugen und bilden eine Brandgefahr. Die Batterien müssen in der Regel nicht getauscht werden. Nimm unbedingt mit uns Kontakt auf, wenn Du den Eindruck bekommst, die Zellen haben ihre Kapazität verloren und müssten erneuert werden.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connect_wifi">Funkverbindung aufbauen</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Systemvoraussetzungen: Für den folgenden Schritt benötigst Du ein WLAN-fähiges Gerät, ein Smartphone, Tablet oder Notebook-Computer sowie einen zeitgemäßen Browser (Firefox, Chrome oder Ähnliches).</em></p>
+</div>
+<div class="paragraph">
+<p>Um das Funkmodul zu verbinden <a href="#wake_up">wecke Deine <em>flatcat</em> auf</a>, falls noch nicht geschehen, und <a href="#connect_charger">verbinde den Lade-Adapter</a> an oder betätige kurz den <code>START</code>-Knopf um Deine <em>flatcat</em> in den <a href="#pause_mode">Ruhemodus</a> zu versetzen.</p>
+</div>
+<div class="paragraph">
+<p>Auf diese Weise pausiert, öffnet Deine <em>flatcat</em> nach kurzer Zeit einen Wifi-Accesspoint, sodass Du dich mit einem geeigneten Endgerät (Computer, Tablet oder Smartphone) zu Deiner <em>flatcat</em> verbinden kannst.</p>
+</div>
+<div class="paragraph">
+<p>Der Name des neuen Accesspoints ist <code>flatcat00</code> wobei die <code>00</code> die <a href="#serialno">Seriennummer</a> Deiner persönlichen <em>flatcats</em> ist. Das benötigte Wifi-Kennwort lautet: <code>flatcat***</code></p>
+</div>
+<div class="paragraph">
+<p>Ist die Verbindung zum Accesspoint aufgebaut kannst Du ein Browserfenster öffnen und die URL <code>https:\\flatcat00.local</code> eingeben. Kurz darauf öffnet sich die Web-Applikation.</p>
+</div>
+<div class="paragraph">
+<p>In dieser Web-Applikation kannst Du  Statusdaten wie z.B. Batterieladung einsehen, die <a href="#update_software">Software aktualisieren</a> oder <a href="#settings">Einstellungen</a> für Deine <em>flatcat</em> vornehmen.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Wenn Du den Lade-Apdater abziehst oder durch Drücken des <code>START</code>-Knopfes Dein <em>flatcat</em> aus dem Ruhemodus entlässt wird kurze Zeit später der Access-Point wieder geschlossen und das Wifi-Modul abgeschaltet, um Strom zu sparen.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="update_software">Software aktualisieren</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Für das Aktualisieren der Software muss eine Funkverbindung aufgebaut sein. Lesen Sie Abschnitt <a href="#connect_wifi">Funkmodul verbinden</a> um zu erfahren, wie eine Funkverbindung mit Deinem flatcat hergestellt werden kann.</em></p>
+</div>
+<div class="paragraph">
+<p>to be continued&#8230;&#8203;.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="settings">Einstellungen vornehmen</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Für das Ändern der Nutzereinstellungen muss eine Funkverbindung aufgebaut sein. Lesen Sie Abschnitt <a href="#connect_wifi">Funkmodul verbinden</a> um zu erfahren, wie eine Funkverbindung mit Deinem flatcat hergestellt werden kann.</em></p>
+</div>
+<div class="paragraph">
+<p>to be continued&#8230;&#8203;.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cleaning">Reinigung</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Lies die Waschhinweise sorgfältig durch, da sonst erheblicher Schaden an Deiner <em>flatcat</em> entstehen kann.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Keinesfalls darf die Elektronik und Mechanik in Wasser getaucht werden. Dies kann zum Totalausfall führen.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="remove_fur">Fell ausziehen</h3>
+<div class="paragraph">
+<p>Zum Waschen muss das Fell in jedem Fall ausgezogen werden! Die Elektronik und Mechanik sind nicht Wasserdicht und können bei Nässe schaden nehmen.</p>
+</div>
+<div class="paragraph">
+<p>Schalte Dein <em>flatcat</em> aus (siehe Abschnitt <a href="#sleep_mode">Schlafmodus</a>). Greife zum Ausziehen des Fells vorn in die Öffnung und ziehe vorsichtig das Kopf-Segment aus der Lasche. Dies geht am Besten wenn Du Dein <em>flatcat</em> senkrecht am Fell festhälts, sodass der Rumpf tiefer ins Fell nach hinten rutscht. Wenn Du das Kopf-Segment greifen kannst ziehe vorsichtig den elektromechanischen Rumpf komplett heraus.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="washing">Waschen</h3>
+<div class="paragraph">
+<p>Es wird Handwäsche bei 30°C empfohlen.
+Wenn Du das Fell dennoch mit einer Waschmaschine waschen möchtest, krämpel das ausgezogene Fell vorsichtig linksrum und lege es zum Waschen in einen Kopfkissenbezug. Stelle die Waschmaschine auf 30°C Bunt- oder Feinwäsche ein.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Keinesfalls darf das Fell in die Kochwäsche. Dies kann die Fasern des Fells unwiderbringlich zum Schlechten verändern oder die Fasern derart verkürzen, sodass es nicht mehr passt und ausgetauscht werden muss. Wasche das Fell ausschließlich bei max. 30°C.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="drying">Trocknen</h3>
+<div class="paragraph">
+<p>Wenn Du von Hand gewaschen hast, wringe das Fell vorsicht und mit nicht allzu viel Kraft aus. Lege das Fell zum Trocknen einige Stunden an einen gut belüfteten, lauwarmen Ort. Lege das Fell niemals direkt auf die Heizung!</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Nur ein vollständig getrocknetes Fell darf wieder angezogen werden. Restfeuchtigkeit kann die Eletronik oder Mechanik Deiner <em>flatcat</em> beschädigen.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="put_on_fur">Fell anziehen</h3>
+<div class="paragraph">
+<p>Zum Anziehen schiebe den elektromechanischen Rumpf mit dem hinteren Segment zuerst wieder in die große Öffnung ins Fell hinein. Achte darauf, dass sich der Ladeport und <code>START</code>-Knopf auf der Seite mit dem Jetpack-Label befinden.</p>
+</div>
+<div class="paragraph">
+<p>Wenn es vollständig in das Fell geschoben ist, schiebe das Kopfsegment wieder unter die Lasche.
+Stelle sicher, dass das Kopf-Segment wieder hinter der Lasche ist, damit der Rumpf nicht aus dem Fell rutschen kann.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Bruchgefahr! Ein nicht richtig in die Lasche geschobener Rumpf kann versehentlich hinausfallen und dann ohne den Schutz des Fells u.U. sehr hart aufschlagen.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maintenance">Wartung</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Deine <em>flatcat</em> ist ein komplexes elektromechanisches Gerät und bedarf eines gelegentlichen genaueren Hinsehens. Prüfe von Zeit zu Zeit, ob sich der Zustand offensichtlich verschlechtert hat. Bitte kontaktiere uns umgehend, wenn Dir sich anbahnende Defekte auffallen.</p>
+</div>
+<div class="paragraph">
+<p>Aber bitte, kümmere Dich nicht sofort selbst darum, sondern sei so gut und dokumentiere uns den Defekt und gehe nur mit Bedacht und nur in Absprache mit uns an eine evtl. Reparatur.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="faq">Häufige Fragen</h2>
+<div class="sectionbody">
+<div class="sect3">
+<h4 id="_meine_flatcat_ist_nass_geworden_was_muss_ich_tun">Meine <em>flatcat</em> ist nass geworden, was muss ich tun?</h4>
+<div class="paragraph">
+<p>Ein paar kleine Tropfen sind in der Regel kein Problem. Sollte das Fell deutlich nass geworden sein (z.B. durch Regen, oder ein umgefallenes Wasserglas),  <a href="#sleepmode">schalte Deine flatcat aus</a>. Dann  <a href="#remove_fur">zieh das Fell aus</a> und legen es zum Trocknen an einen warmen, gut belüfteten Ort. Prüfe, ob der elektromechanische Rumpf ebenfalls nass geworden ist und lege diesen zum Trocknen ebenfalls an einen warmen (nicht heißen) und gut belüfteten Ort.
+Lege den Rumpf Deiner <em>flatcat</em> dabei auf die Seitenkante damit ggf. ins Gehäuse gedrungene Restfeuchtigkeit ablaufen kann.</p>
+</div>
+<div class="paragraph">
+<p>Ist eine <em>flatcat</em> einer größeren Menge Flüssigkeit ausgesetzt gewesen (z.B. in die Badewanne gefallen) ist es unabdingbar, dass wir vom <em>Jetpack Cognition Lab</em> eine Kontrolluntersuchung durchführt. Lass die Elektronik und Mechank Deiner <em>flatcat</em> vorher einige Tage trocken <strong>ohne</strong> sie einzuschalten! In jedem Fall solltest Du uns kontaktieren und dann erst das Gerät einschicken.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_woraus_besteht_das_fell_meiner_flatcat">Woraus besteht das Fell meiner <em>flatcat</em>?</h4>
+<div class="paragraph">
+<p>Das Fell Deiner <em>flatcat</em> besteht aus&#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>to be continued&#8230;&#8203;</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_meine_flatcat_lässt_sich_nicht_einschalten_was_kann_ich_tun">Meine _flatcat_lässt sich nicht einschalten, was kann ich tun?</h4>
+<div class="paragraph">
+<p>Lies zunächst nochmal Abschnitt <a href="#wake_up">Aufwachen</a>. Sollte der normale Einschaltvorgang nicht gelingen, halte den <code>START</code>-Knopf ca. 10 Sekunden lang gedrückt. Dann warte einige Minuten und versuche erneut das Einschalten.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_meine_flatcat_ist_heruntergefallen_wie_kann_ich_schauen_ob_es_ihr_gut_geht">Meine <em>flatcat</em> ist heruntergefallen, wie kann ich schauen ob es ihr gut geht?</h4>
+<div class="paragraph">
+<p>Je nach Höhe und härte des Bodens, kann eine <em>flatcat</em> schaden nehmen wenn Sie hinunter stürzt.
+Nimm nach einem Sturz zur Kontrolle das Fell ab (Abschnitt <a href="#remove_fur">Fell ausziehen</a>) und prüfe den elektromechanischen Rumpf auf Bruchstellen. Bewege vorsichtig die Gelenke und prüfe, ob sich die Bewegung nach dem Sturz andern anfühlt oder anhört.  Bitte dokumentiere etwaige Defekte (z.B. mit einem Foto oder Tonaufnahme) und kontaktiere uns umgehend.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_wo_finde_ich_die_seriennummer_meiner_flatcat">Wo finde ich die Seriennummer meiner <em>flatcat</em>?</h4>
+<div id="serialno" class="paragraph">
+<p>Die Seriennummer ist auf der Unterseite des Kopf-Segments aufgedruckt. Dazu musst Du das <a href="#remove_fur">Fell ausziehen</a> und Deine <em>flatcat</em> auf den Rücken legen.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 0.1<br>
+Last updated 2021-11-16 16:02:20 +0100
+</div>
+</div>
+</body>
+</html>
