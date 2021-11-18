@@ -52,10 +52,10 @@ _flatcats_ lieben es auf dem Schoß oder im Arm gehalten zu werden. Sorge für e
 
 [IMPORTANT]
 ====
-Wecke Deine _flatcat_ nie von einer erhöhten, unsicheren Position aus auf. Sie könnte abstürzen und sich etwas brechen.
+Wecke Deine _flatcat_ nie von einer erhöhten, unsicheren Position, wie zum Beispiel von einem Tisch aus auf. Sie könnte abstürzen und sich etwas brechen.
 ====
 
-Um Deine _flatcat_ aufzuwecken, musst Du den `START`-Knopf ca. 1 Sekunden lang drücken. Dieser befindet sich im hinteren Segment linksseitig neben dem Jetpack-Label. Dort befindet sich eine kleine Öffnung im Fell. Ertaste die Öffnung im Fell mit den Fingerspitzen und ziehe sie leicht auseinander. Du kannst nun einen kleinen, ca 3x4mm großen, orangefarbenen Knopf erkennen. Drücke den `START`-Knopf und warte ca. 20 Sekunden. Ähnlich wie bei einem Smartphone oder Tablet-Computer befindet sich in jeder _flatcat_ ein Linux-Computer. Dieser benötigt einige Sekunden zum booten. Wenn Deine _flatcat_ aufgewacht ist beginnt Sie damit sich zu bewegen oder liegt manchmal noch etwas ruhig da, bis sie leicht berührt oder angestubst wird.
+Um Deine _flatcat_ aufzuwecken, musst Du den `START`-Knopf ca. 1 Sekunden lang drücken. Dieser befindet sich im hinteren Segment linksseitig neben dem Jetpack-Label. Dort befindet sich eine kleine Öffnung im Fell. Ertaste die Öffnung im Fell mit den Fingerspitzen und ziehe sie leicht auseinander. Du kannst nun einen kleinen, ca 3x4mm großen, orangefarbenen Knopf erkennen. Drücke den `START`-Knopf und warte ca. 20 Sekunden. Ähnlich wie bei einem Smartphone oder Tablet-Computer befindet sich in jeder _flatcat_ ein Linux-Computer. Dieser benötigt einige Sekunden zum booten. Wenn Deine _flatcat_ aufgewacht ist beginnt Sie damit sich zu bewegen oder liegt manchmal noch etwas ruhig da, bis sie leicht berührt oder angestubst wird. Sollte sie sich also nach etwa einer halben Minute noch nicht bewegen, kannst Du sie einfach leicht anstubsen um sie zu motivieren.
 
 image:./start_button.jpg[width=49%, pdfwidth=49%]
 
@@ -247,8 +247,8 @@ Lies zunächst nochmal Abschnitt <<wake_up, Aufwachen>>. Sollte der normale Eins
 
 ==== Meine _flatcat_ ist heruntergefallen, wie kann ich schauen ob es ihr gut geht?
 
-Je nach Höhe und härte des Bodens, kann eine _flatcat_ schaden nehmen wenn Sie hinunter stürzt.
-Nimm nach einem Sturz zur Kontrolle das Fell ab (Abschnitt <<remove_fur,Fell ausziehen>>) und prüfe den elektromechanischen Rumpf auf Bruchstellen. Bewege vorsichtig die Gelenke und prüfe, ob sich die Bewegung nach dem Sturz andern anfühlt oder anhört.  Bitte dokumentiere etwaige Defekte (z.B. mit einem Foto oder Tonaufnahme) und kontaktiere uns umgehend.
+Je nach Fallhöhe und härte des Bodens, kann eine _flatcat_ ernsten Schaden nehmen wenn Sie hinunterstürzt.
+Nimm nach einem Sturz zur Kontrolle das Fell ab (Abschnitt <<remove_fur,Fell ausziehen>>) und prüfe den elektromechanischen Rumpf auf Bruchstellen. Bewege vorsichtig die Gelenke und prüfe, ob sich die Bewegung nach dem Sturz anders anfühlt oder anhört. Bitte dokumentiere etwaige Defekte (z.B. mit einem Foto oder Tonaufnahme) und kontaktiere uns umgehend.
 
 
 === Allgemeines
@@ -260,7 +260,7 @@ Hier der Link auf die link:https://www.fakefurshop.com[Hersteller-Seite]
 
 ==== Ich mag die Augen nicht und finde eine gesichtslose _flatcat_ angenehmer anzuschauen. Kann ich Sie entfernen?
 
-Ja. Die Augen sind angenäht und können vorsichtig mit einer Schere entfernt werden.
+Ja, die Augen können entfernt werden. Die Augen sind angenäht und können vorsichtig mit einer Schere abgetrennt werden.
 ////
 	TODO:
 	+ buzz
