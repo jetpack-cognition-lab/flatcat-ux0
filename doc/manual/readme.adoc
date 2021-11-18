@@ -24,9 +24,12 @@ endif::[]
 
 _For the English version of this manual follow link:https://gitlab.com/jetpack/flatcat/manual_en[this link]._
 
-image:./foto.jpg[width=50%, pdf-width=50%]
+image:./foto.jpg[width=100%, pdf-width=100%]
 
-Willkommen im Benutzungshandbuch Deiner _flatcat_. Dieses Dokument macht Dich mit den wichtigsten Funktionen Deines elektronischen Haustiers vertraut, erklärt den bevorzugten Umgang und gibt Hinweise zur Pflege und Wartung.
+[sidebar]
+--
+_Hallo Welt!_ Willkommen im Handbuch Deiner _flatcat_. Dieses Dokument macht Dich mit den wichtigsten Funktionen Deines elektronischen Haustiers vertraut, erklärt den bevorzugten Umgang und gibt Hinweise zur Pflege und Wartung. 
+--
 
 toc::[]
 
@@ -209,20 +212,16 @@ Deine _flatcat_ ist ein komplexes elektromechanisches Gerät und bedarf eines ge
 
 Aber bitte, kümmere Dich nicht sofort selbst darum, sondern sei so gut und dokumentiere uns den Defekt und gehe nur mit Bedacht und nur in Absprache mit uns an eine evtl. Reparatur.
 
-
 [#faq]
 == Häufige Fragen
+
+=== Probleme beheben
 
 ==== Meine _flatcat_ ist nass geworden, was muss ich tun?
 Ein paar kleine Tropfen sind in der Regel kein Problem. Sollte das Fell deutlich nass geworden sein (z.B. durch Regen, oder ein umgefallenes Wasserglas),  <<sleepmode,schalte Deine flatcat aus>>. Dann  <<remove_fur, zieh das Fell aus>> und legen es zum Trocknen an einen warmen, gut belüfteten Ort. Prüfe, ob der elektromechanische Rumpf ebenfalls nass geworden ist und lege diesen zum Trocknen ebenfalls an einen warmen (nicht heißen) und gut belüfteten Ort.
 Lege den Rumpf Deiner _flatcat_ dabei auf die Seitenkante damit ggf. ins Gehäuse gedrungene Restfeuchtigkeit ablaufen kann.
 
 Ist eine _flatcat_ einer größeren Menge Flüssigkeit ausgesetzt gewesen (z.B. in die Badewanne gefallen) ist es unabdingbar, dass wir vom _Jetpack Cognition Lab_ eine Kontrolluntersuchung durchführt. Lass die Elektronik und Mechank Deiner _flatcat_ vorher einige Tage trocken *ohne* sie einzuschalten! In jedem Fall solltest Du uns kontaktieren und dann erst das Gerät einschicken.
-
-==== Woraus besteht das Fell meiner _flatcat_?
-Das Fell Deiner _flatcat_ besteht aus aus einer Mischungen aus Polyester, Acryl und Modacryl in unterschiedlichen Anteilen. Die Felle sind nicht tierischen Ursprungs.
-
-Hier der Link auf die link:https://www.fakefurshop.com[Hersteller-Seite]
 
 ==== Meine _flatcat_ lässt sich nicht einschalten, was kann ich tun?
 
@@ -233,6 +232,13 @@ Lies zunächst nochmal Abschnitt <<wake_up, Aufwachen>>. Sollte der normale Eins
 Je nach Höhe und härte des Bodens, kann eine _flatcat_ schaden nehmen wenn Sie hinunter stürzt.
 Nimm nach einem Sturz zur Kontrolle das Fell ab (Abschnitt <<remove_fur,Fell ausziehen>>) und prüfe den elektromechanischen Rumpf auf Bruchstellen. Bewege vorsichtig die Gelenke und prüfe, ob sich die Bewegung nach dem Sturz andern anfühlt oder anhört.  Bitte dokumentiere etwaige Defekte (z.B. mit einem Foto oder Tonaufnahme) und kontaktiere uns umgehend.
 
+
+=== Allgemeines
+
+==== Woraus besteht das Fell meiner _flatcat_?
+Das Fell Deiner _flatcat_ besteht aus aus einer Mischungen aus Polyester, Acryl und Modacryl in unterschiedlichen Anteilen. Die Felle sind nicht tierischen Ursprungs.
+
+Hier der Link auf die link:https://www.fakefurshop.com[Hersteller-Seite]
 
 ////
 	TODO:
