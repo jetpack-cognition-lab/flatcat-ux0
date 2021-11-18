@@ -24,11 +24,11 @@ endif::[]
 
 _For the English version of this manual follow link:https://gitlab.com/jetpack/flatcat/manual_en[this link]._
 
-image:./foto.jpg[width=100%, pdf-width=100%]
+image:./foto.jpg[width=100%, pdfwidth=100%]
 
 [sidebar]
 --
-_Hallo Welt!_ Willkommen im Handbuch Deiner _flatcat_. Dieses Dokument macht Dich mit den wichtigsten Funktionen Deines elektronischen Haustiers vertraut, erklärt den bevorzugten Umgang und gibt Hinweise zur Pflege und Wartung. 
+_Hallo Welt!_ Willkommen im Handbuch Deiner _flatcat_. Dieses Dokument macht Dich mit den wichtigsten Funktionen Deines elektronischen Haustiers vertraut, erklärt den bevorzugten Umgang und gibt Hinweise zur Pflege und Wartung. s
 --
 
 toc::[]
@@ -46,7 +46,7 @@ An Deiner _flatcat_ solltest du keine eigenmächtigen Reparaturen oder Modifikat
 
 [#wake_up]
 === Aufwecken
-Suche Dir eine sichere Position für Deine _flatcat_ z.B. auf dem Teppich oder auf einer größeren Sofafläche. Kurz nach dem Aufwecken fängt Deine _flatcat_ an sich zu bewegen.
+Suche Dir eine sichere Position für Deine _flatcat_ z.B. auf dem Teppich oder auf einer größeren Sofa-Fläche. Kurz nach dem Aufwecken fängt Deine _flatcat_ an sich zu bewegen.
 
 _flatcats_ lieben es auf dem Schoß oder im Arm gehalten zu werden. Sorge für eine sichere Umgebung, wenn Du Deine _flatcat_ aufwecken möchtest. Lasse sie nicht unbeaufsichtigt.
 
@@ -55,12 +55,14 @@ _flatcats_ lieben es auf dem Schoß oder im Arm gehalten zu werden. Sorge für e
 Wecke Deine _flatcat_ nie von einer erhöhten, unsicheren Position aus auf. Sie könnte abstürzen und sich etwas brechen.
 ====
 
-Um Deine _flatcat_ aufzuwecken musst Du den `START`-Knopf ca. 1 Sekunden lang drücken. Dieser befindet sich im hinteren Segment linksseitig neben dem Jetpack-Label. Dort befindet sich eine kleine Öffnung im Fell. Ertaste die Öffnung im Fell mit den Fingespitzen und ziehe sie leicht auseinander. Du kannst nun einen kleinen, ca 3x4mm großen, orange-farbenen Knopf erkennen. Drücke den `START`-Knopf und warte ca. 20 Sekunden. Ähnlich wie bei einem Smartphone oder Tablet-Computer befindet sich in jeder _flatcat_ ein Linux-Computer. Dieser benötigt einige Sekunden zum booten. Wenn Deine _flatcat_ aufgewacht ist beginnt Sie damit sich zu bewegen oder liegt manchmal noch etwas ruhig da, bis sie leicht berührt oder angestubst wird.
+Um Deine _flatcat_ aufzuwecken, musst Du den `START`-Knopf ca. 1 Sekunden lang drücken. Dieser befindet sich im hinteren Segment linksseitig neben dem Jetpack-Label. Dort befindet sich eine kleine Öffnung im Fell. Ertaste die Öffnung im Fell mit den Fingerspitzen und ziehe sie leicht auseinander. Du kannst nun einen kleinen, ca 3x4mm großen, orangefarbenen Knopf erkennen. Drücke den `START`-Knopf und warte ca. 20 Sekunden. Ähnlich wie bei einem Smartphone oder Tablet-Computer befindet sich in jeder _flatcat_ ein Linux-Computer. Dieser benötigt einige Sekunden zum booten. Wenn Deine _flatcat_ aufgewacht ist beginnt Sie damit sich zu bewegen oder liegt manchmal noch etwas ruhig da, bis sie leicht berührt oder angestubst wird.
+
+image:./start_button.jpg[width=49%, pdfwidth=49%]
 
 
 [#pause_mode]
 === Ruhemodus
-Im Ruhemodus bleibt Deine _flatcat_ stehts still liegen. Ein kurzer Druck auf den `START`-Knopf oder das Anstecken des Lade-Adapters versetzt Deine _flatcat_ in den Ruhemodus.
+Im Ruhemodus bleibt Deine _flatcat_ stets still liegen. Ein kurzer Druck auf den `START`-Knopf oder das Anstecken des Lade-Adapters versetzt Deine _flatcat_ in den Ruhemodus.
 
 Wenn Du den Lade-Adapter wieder abziehst wird der Ruhemodus beendet und Deine _flatcat_ bewegt sich wieder. Gleiches gilt für ein erneutes kurzes Drücken des Start-Knopfes, wenn dieser benutzt wurde, um den Ruhemodus zu aktivieren.
 
@@ -70,9 +72,11 @@ Nach ca. 15 Minuten im Ruhemodus geht Deine _flatcat_ automatisch in den Schlafm
 ====
 
 
+image:./flatcat_long.jpg[width=100%, pdfwidth=100%]
+
 [#sleep_mode]
 === Schlafmodus
-Um Deine _flatcat_ in den Schlafmodus zu versetzen halte  den `START`-Knopf ca. 3-4 Sekunden lang gedrückt. Deine _flatcat_ hört auf sich zu bewegen und fährt das System herunter, entläd die Puffer-Kondensatoren und schaltet sich aus.
+Um Deine _flatcat_ in den Schlafmodus zu versetzen, halte  den `START`-Knopf ca. 3-4 Sekunden lang gedrückt. Deine _flatcat_ hört auf sich zu bewegen und fährt das System herunter, entlädt die Puffer-Kondensatoren und schaltet sich aus.
 
 Warte mindestens eine Minute bis Du Deine _flatcat_ erneut einschaltest.
 
@@ -83,19 +87,31 @@ Wenn die Batterien zu schwach geworden sind. Geht Deine _flatcat_ automatisch in
 == Batterien Laden
 Deine _flatcat_ hat wiederaufladbare Lithium-Ionen Batterien ("Akkus"), welche bei guter Pflege unzählige Male wieder aufgeladen werden können und in der Regel nicht getauscht werden müssen. Lies den Abschnitt <<change_batteries, Batterien tauschen>> wenn Du dennoch den Eindruck hast, dass sie getauscht werden müssten.
 
+image:./charger.jpg[width=49%, pdfwidth=49%]
+image:./charger_connected.jpg[width=49%, pdfwidth=49%]
+
 
 [#connect_charger]
 === Lade-Adapter verbinden
-Um Deine _flatcat_ zu Laden verbinde sie mit dem beigelegten Lade-Adapter. Der Stecker zur _flactat_ ist vom Typ `USB-Type C`. Der Ladeport befindet sich im letzen Segment linksseitig nebem dem Jetpack-Label (unmittelbar neben dem `Start`-Knopf). Dort ist eine kleine Öffnung im Fell. Wenn du das Fell etwas auseinander ziehst kannst Du das Kabel leichter einstecken. Verbinde dann den Lade-Adapter mit einer Haussteckdose (110 -- 240 V~).
+Um Deine _flatcat_ zu laden, verbinde sie mit dem beigelegten Lade-Adapter. Der Stecker zur _flactat_ ist vom Typ `USB-Type C`. Der Ladeport befindet sich im letzten Segment linksseitig neben dem Jetpack-Label (unmittelbar neben dem `Start`-Knopf). Dort ist eine kleine Öffnung im Fell. Wenn du das Fell etwas auseinander ziehst, kannst Du das Kabel leichter einstecken. Du siehst dort ein schwaches Leuchten, rechts daneben ist der Ladeport. Verbinde danach den Lade-Adapter mit einer Haussteckdose (110 -- 240 V~).
+
+[NOTE]
+====
+Wenn es Dir schwer fällt den Ladeport durch das Fell zu finden, versuche es zunächst mit ausgezogenem Fell (siehe Abschnitt <<remove_fur, Fell ausziehen>>).
+====
 
 [TIP]
 ====
-In der Regel kannst Du zum Laden auch andere `USB-Type C` Lade-Adapter verwenden, falls diese bereits für Dein Smartphone oder Notebook verfügbar sind. Jedes `USB-Type C` kompatible Ladegerät mit mind. 1.5A (5V) Ladestrom ist geeignet.
+In der Regel kannst Du zum Laden auch andere `USB-Type C`-Lade-Adapter verwenden, falls diese bereits für Dein Smartphone oder Notebook verfügbar sind. Jedes `USB-Type C`-kompatible Ladegerät mit mindestens 1.5A Ladestrom und (5-5.1V Spannung ist geeignet. Bitte kontaktiere uns bevor du ein anderes Netzteil verwenden möchtest.
 ====
 
+image:./fur_label.jpg[width=49%, pdfwidth=49%]
+image:./find_charging_port.jpg[width=49%, pdfwidth=49%]
+
+image:./charger_connected_fur.jpg[width=49%, pdfwidth=49%]
 
 === Wichtige Hinweise zum Aufladen
-Die Kapazität der _flatcat_-Batterien beträgt rund 10Ah (Ampere-Stunden) bei nominal 3,6 Volt Spannung. Bei voller Ladung und mäßiger Benutzung sollte eine Laufzeit von 5-8 Stunden erreichbar sein.
+Die Kapazität der _flatcat_-Batterien beträgt rund 10Ah (Ampere-Stunden) bei einer nominalen Spannung von 3,6 Volt. Bei voller Ladung und mäßiger Benutzung sollte eine Laufzeit von 5-8 Stunden erreichbar sein.
 
 Lade Deine _flatcat_ am Besten z.B. nachts, bzw. wenn Du es einige Stunden nicht verwenden möchtest. Die Ladung erfolgt ungefähr mit der gleichen Geschwindigkeit wie die vorherige Entladung, um die Batterien zu schonen und eine möglichst lange Lebensdauer zu erreichen. Langsames Aufladen ermöglicht den Batterien mehr Ladezyklen zu erleben. Eine vollständige Ladung dauert dementsprechend je nach Entladungstiefe auch ca. 5-8 Stunden.
 
@@ -109,6 +125,7 @@ Die drei verbauten Lithium-Ionen-Zellen sind im hinteren Segment Deiner _flatcat
 Lithuim-Ionen Batterien können bei Kurzschluss sehr hohe Ströme erzeugen und bilden eine Brandgefahr. Die Batterien müssen in der Regel nicht getauscht werden. Nimm unbedingt mit uns Kontakt auf, wenn Du den Eindruck bekommst, die Zellen haben ihre Kapazität verloren und müssten erneuert werden.
 ====
 
+image:./change_batteries.jpg[width=49%, pdfwidth=49%]
 
 [#connect_wifi]
 == Funkverbindung aufbauen
@@ -134,7 +151,7 @@ In dieser Web-Applikation kannst Du  Statusdaten wie z.B. Batterieladung einsehe
 
 [NOTE]
 ====
-Wenn Du den Lade-Apdater abziehst oder durch Drücken des `START`-Knopfes Dein _flatcat_ aus dem Ruhemodus entlässt wird kurze Zeit später der Access-Point wieder geschlossen und das Wifi-Modul abgeschaltet, um Strom zu sparen.
+Wenn Du den Lade-Adapter abziehst oder durch Drücken des `START`-Knopfes Dein _flatcat_ aus dem Ruhemodus entlässt wird kurze Zeit später der Access-Point wieder geschlossen und das Wifi-Modul abgeschaltet, um Strom zu sparen.
 ====
 
 
@@ -154,33 +171,34 @@ to be continued....
 
 [#cleaning]
 == Reinigung
-[NOTE]
-====
-Lies die Waschhinweise sorgfältig durch, da sonst erheblicher Schaden an Deiner _flatcat_ entstehen kann.
-====
+Bevor Du dein _flatcat_ reinigst, lies Dir bitte die Waschhinweise sorgfältig durch, da sonst erheblicher Schaden an Deiner _flatcat_ entstehen kann.
 
 [CAUTION]
 ====
-Keinesfalls darf die Elektronik und Mechanik in Wasser getaucht werden. Dies kann zum Totalausfall führen.
+*Keinesfalls* darf die Elektronik und Mechanik *in Wasser getaucht* werden. Dies kann zum Totalausfall führen.
 ====
-
 
 [#remove_fur]
 === Fell ausziehen
 Zum Waschen muss das Fell in jedem Fall ausgezogen werden! Die Elektronik und Mechanik sind nicht Wasserdicht und können bei Nässe schaden nehmen.
 
-Schalte Dein _flatcat_ aus (siehe Abschnitt <<sleep_mode, Schlafmodus>>). Greife zum Ausziehen des Fells vorn in die Öffnung und ziehe vorsichtig das Kopf-Segment aus der Lasche. Dies geht am Besten wenn Du Dein _flatcat_ senkrecht am Fell festhälts, sodass der Rumpf tiefer ins Fell nach hinten rutscht. Wenn Du das Kopf-Segment greifen kannst ziehe vorsichtig den elektromechanischen Rumpf komplett heraus.
+Schalte Dein _flatcat_ aus (siehe Abschnitt <<sleep_mode, Schlafmodus>>). Greife zum Ausziehen des Fells vorn in die Öffnung und ziehe vorsichtig das Kopf-Segment aus der Lasche. Dies geht am Besten wenn Du Dein _flatcat_ senkrecht am Fell festhältst, sodass der Rumpf tiefer ins Fell nach hinten rutscht. Wenn Du das Kopf-Segment greifen kannst ziehe vorsichtig den elektromechanischen Rumpf komplett heraus.
+
+image:./flatcat_naked.jpg[width=64%, pdfwidth=64%]
+image:./insert_into_fur.jpg[width=32%, pdfwidth=32%]
+
 
 [#washing]
 === Waschen
 Es wird Handwäsche bei 30°C empfohlen.
-Wenn Du das Fell dennoch mit einer Waschmaschine waschen möchtest, krämpel das ausgezogene Fell vorsichtig linksrum und lege es zum Waschen in einen Kopfkissenbezug. Stelle die Waschmaschine auf 30°C Bunt- oder Feinwäsche ein.
+Wenn Du das Fell dennoch mit einer Waschmaschine waschen möchtest, krempel das ausgezogene Fell vorsichtig auf Links und lege es zum Waschen in einen Kopfkissenbezug. Somit sind die Augen und die Fasern besser geschützt. Stelle die Waschmaschine auf 30°C Bunt- oder Feinwäsche ein.
 
 [WARNING]
 ====
-Das Fell darf nicht in die Kochwäsche! Dies kann die Fasern des Fells unwiderbringlich zum Schlechten verändern oder die Fasern derart verkürzen, sodass es nicht mehr passt und ausgetauscht werden muss. Wasche das Fell ausschließlich bei max. 30°C.
+Das Fell darf nicht in die Kochwäsche! Dies kann die Fasern des Fells unwiederbringlich zum Schlechten verändern oder die Fasern derart verkürzen, sodass es nicht mehr passt und ausgetauscht werden muss. Wasche das Fell ausschließlich bei max. 30°C.
 ====
 
+image:./fur_inside_out.jpg[width=100%, pdfwidth=100%]
 
 [#drying]
 === Trocknen
@@ -188,7 +206,7 @@ Wenn Du von Hand gewaschen hast, wringe das Fell vorsicht und mit nicht allzu vi
 
 [IMPORTANT]
 ====
-Nur ein vollständig getrocknetes Fell darf wieder angezogen werden. Restfeuchtigkeit kann die Eletronik oder Mechanik Deiner _flatcat_ beschädigen.
+Nur ein vollständig getrocknetes Fell darf wieder angezogen werden. Restfeuchtigkeit kann die Elektronik oder Mechanik Deiner _flatcat_ beschädigen.
 ====
 
 
@@ -221,7 +239,7 @@ Aber bitte, kümmere Dich nicht sofort selbst darum, sondern sei so gut und doku
 Ein paar kleine Tropfen sind in der Regel kein Problem. Sollte das Fell deutlich nass geworden sein (z.B. durch Regen, oder ein umgefallenes Wasserglas),  <<sleepmode,schalte Deine flatcat aus>>. Dann  <<remove_fur, zieh das Fell aus>> und legen es zum Trocknen an einen warmen, gut belüfteten Ort. Prüfe, ob der elektromechanische Rumpf ebenfalls nass geworden ist und lege diesen zum Trocknen ebenfalls an einen warmen (nicht heißen) und gut belüfteten Ort.
 Lege den Rumpf Deiner _flatcat_ dabei auf die Seitenkante damit ggf. ins Gehäuse gedrungene Restfeuchtigkeit ablaufen kann.
 
-Ist eine _flatcat_ einer größeren Menge Flüssigkeit ausgesetzt gewesen (z.B. in die Badewanne gefallen) ist es unabdingbar, dass wir vom _Jetpack Cognition Lab_ eine Kontrolluntersuchung durchführt. Lass die Elektronik und Mechank Deiner _flatcat_ vorher einige Tage trocken *ohne* sie einzuschalten! In jedem Fall solltest Du uns kontaktieren und dann erst das Gerät einschicken.
+Ist eine _flatcat_ einer größeren Menge Flüssigkeit ausgesetzt gewesen (z.B. in die Badewanne gefallen) ist es unabdingbar, dass wir vom _Jetpack Cognition Lab_ eine Kontrolluntersuchung durchführt. Lass die Elektronik und Mechanik Deiner _flatcat_ vorher einige Tage trocken *ohne* sie einzuschalten! In jedem Fall solltest Du uns kontaktieren und dann erst das Gerät einschicken.
 
 ==== Meine _flatcat_ lässt sich nicht einschalten, was kann ich tun?
 
@@ -240,6 +258,9 @@ Das Fell Deiner _flatcat_ besteht aus aus einer Mischungen aus Polyester, Acryl 
 
 Hier der Link auf die link:https://www.fakefurshop.com[Hersteller-Seite]
 
+==== Ich mag die Augen nicht und finde eine gesichtslose _flatcat_ angenehmer anzuschauen. Kann ich Sie entfernen?
+
+Ja. Die Augen sind angenäht und können vorsichtig mit einer Schere entfernt werden.
 ////
 	TODO:
 	+ buzz
