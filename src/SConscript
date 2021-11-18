@@ -9,6 +9,7 @@
  +----------------------------------+
 
 """
+Import('env')
 
 src_files = [ 'ux0_serial.cpp' ]
 
@@ -29,4 +30,4 @@ cpppaths = [ '.'
            ]
 
 
-Program('../ux0_serial', LIBS=['framework', 'pthread', 'stdc++fs'], LIBPATH = ["../../framework"], source = src_files, CPPPATH=cpppaths, CPPFLAGS=cppflags, CXXFLAGS=cxxflags)
+env.Program('../ux0_serial', LIBS=['framework', 'pthread', 'stdc++fs'], LIBPATH = ["../../framework"], source = src_files, CPPPATH=cpppaths, CPPFLAGS=cppflags, CXXFLAGS=cxxflags)

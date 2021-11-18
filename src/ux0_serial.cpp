@@ -81,7 +81,7 @@ MainApplication::execute_cycle(void)
 
 	/* emergency shutdown */
     bool is_shutdown_signaled = status.ttlive < 10;
-	if (is_shutdown_signaled or status.Ubat < 2.7) {
+    if (robot.battery.is_active() and (is_shutdown_signaled or status.Ubat < 2.7)) {
 		sts_msg("Shutdown flatcat due to %s", is_shutdown_signaled ? "BMS notified shutdown" : "unexpected power fail");
 		sts_msg("Last measurements: Ubat=%4.2f Ubus=%4.2f T=%02u F=%s"
 		       , status.Ubat, status.Ubus, status.ttlive, status.flag_str.c_str());
@@ -109,6 +109,13 @@ int main(int argc, char* argv[])
 	srand((unsigned) time(NULL));
 	signal(SIGINT, signal_terminate_handler);
 
+	// handle version switch before initializing app
+	if(supreme::cmdOptionExists(argv, argv+argc, "-v"))
+	  {
+	    sts_msg("flatcat-ux0 version %d", 10);
+	    return EXIT_SUCCESS;
+	  }
+
 	supreme::MainApplication app(argc, argv, exitflag);
 
 	sts_msg("Starting main loop.");
@@ -120,7 +127,8 @@ int main(int argc, char* argv[])
 			sync();
 			sts_msg("DONE.");
 			sts_msg("________\nSHUTDOWN");
-			system("sudo shutdown -h now");
+			// TODO handle hot shutdown
+			// system("sudo shutdown -h now");
 			return EXIT_FAILURE;
 		}
 	}
