@@ -54,15 +54,12 @@ public:
     std::vector<float> csl_cur_mode = {0.0f, 0.0f, 0.0f};
 
 
-    //std::vector<jcl::NeuralOscillator> so2;
-
     FlatcatControl(FlatcatRobot& robot, FlatcatSettings const& settings)
     : robot(robot)
     , settings(settings)
     , usr_params()
     , cur_mode(ControlMode_t::none)
     , tar_mode(ControlMode_t::none)
-    //, so2(3)
     {
 
         /* CSL settings */
@@ -70,7 +67,7 @@ public:
             robot.motorcord[i].set_voltage_limit(settings.motor_voltage_limit);
             robot.motorcord[i].set_pwm_frequency(settings.motor_pwm_frequency);
             robot.motorcord[i].set_disable_position_limits(-0.9,0.9);
-            robot.motorcord[i].set_csl_limits(-0.9,0.9);
+            //robot.motorcord[i].set_csl_limits(-0.5,0.5);
 
             robot.motorcord[i].set_target_csl_fb(settings.motor_csl_param_gf);
             robot.motorcord[i].set_target_csl_gain(settings.motor_csl_param_gi);
@@ -82,11 +79,6 @@ public:
         /* set battery active level to maximum */
         robot.battery.set_voltage_limit(1.0);
 
-        /*unsigned i = 0;
-        for (auto& o: so2) {
-            o.set_frequency(0.001*i++);
-            o.restart();
-        }*/
     }
 
     void execute_cycle(void)
@@ -139,31 +131,15 @@ public:
 		    auto const& data = m.get_data();
 
 
-		    if (csl_cur_mode[i] > .9
+		    /*TODO: if (csl_cur_mode[i] > .9
 		    and fabs(data.output_voltage) > 0.01
 		    and fabs(data.output_voltage) < 0.02)
 			    m.set_pwm_frequency(tonetable[3*i+2]);
 		    else {
 			    m.set_pwm_frequency(settings.motor_pwm_frequency-i*1000);
-            }
+            }*/
 	    }
     }
-
-    /*
-    void welcome(void) {
-        for (auto& o: so2)
-            o.step();
-
-        for (std::size_t i = 0; i < robot.motorcord.size()-1; ++i) {
-            auto& m = robot.motorcord[i];
-            m.set_pwm_frequency(tonetable[3*i+1]);
-			//m.set_controller_type(supreme::sensorimotor::Controller_t::csl);
-            m.set_controller_type(supreme::sensorimotor::Controller_t::voltage);
-            so2[i].step();
-			m.set_target_voltage( 0.04 * fabs(so2.at(i).x1));
-//			m.set_target_csl_mode(fabs(so2.at(i).x1));
-		}
-    }*/
 
 };
 

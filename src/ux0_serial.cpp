@@ -32,7 +32,7 @@ MainApplication::execute_cycle(void)
 		       , status.Ubat, status.Ubus, status.Umot, status.Ilim, status.ttlive, status.state_str.c_str()
                , status.motorcord.errors, status.motorcord.timeouts
 		       , status.flag_str.c_str(), inhibited? "INH" : "ACT"
-                , control.csl_cur_mode[0]);
+               , control.csl_cur_mode[0]);
 
 	/* set tones for all motors */
     control.set_motor_voice();

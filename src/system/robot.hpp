@@ -17,11 +17,32 @@
 
 namespace supreme {
 
+struct SoC_t {
+    float vol, soc;
+};
+
 namespace constants {
     const unsigned num_joints = 3;
 
     const std::array<int16_t, num_joints> dir = { +1, +1, +1};
     const float position_scale = 270.0/360.0;
+
+    const std::array<SoC_t,13> SoC_table = {{{ 4.2, 100.00 },
+                                            { 4.1,  96.48 },
+                                            { 4.0,  88.58 },
+                                            { 3.9,  79.53 },
+                                            { 3.8,  69.74 },
+                                            { 3.7,  57.03 },
+                                            { 3.6,  44.66 },
+                                            { 3.5,  29.63 },
+                                            { 3.4,  17.95 },
+                                            { 3.3,   9.45 },
+                                            { 3.2,   3.95 },
+                                            { 3.1,   1.29 },
+                                            { 3.0,   0.00 }}};
+
+
+
 
 } /* namespace constants */
 
@@ -47,6 +68,7 @@ public: //TODO undo "all public"
         float Ubat = 3.6f;
         float Ilim = 0.0f;
         float Imot = 0.0f;
+        float SoC  = 50.f;
         uint8_t ttlive = 10;
         uint8_t state = 0;
         uint16_t flags = 0;
@@ -248,6 +270,8 @@ private:
         status.Ubat = 0.99f * status.Ubat + 0.01f * Ubat;
         status.Imot = 0.99f * status.Imot + 0.01f * Imot;
         status.Ilim = 0.99f * status.Ilim + 0.01f * Ilim;
+        uint8_t soci= round(clip(4.2f - status.Ubat, 0.0f, 1.2f) * 10);
+        status.SoC  = constants::SoC_table[soci].soc;
 
         status.ttlive   = dat[6];
         status.state    = dat[7];
