@@ -4,150 +4,149 @@
 #include <cassert>
 #include <array>
 
+/* framework */
 #include <common/log_messages.h>
 #include <robots/robot.h>
 #include <robots/joint.h>
 #include <robots/accel.h>
 
+/* libsensorimotor */
 #include <communication_ctrl.hpp>
 #include <motorcord.hpp>
 #include <sensorimotor.hpp>
 
+/* flatcat_ux0 */
 #include "system/settings.hpp"
 
 namespace supreme {
 
 struct SoC_t {
-    float vol, soc;
+	float vol, soc;
 };
 
 namespace constants {
-    const unsigned num_joints = 3;
+	const unsigned num_joints = 3;
 
-    const std::array<int16_t, num_joints> dir = { +1, +1, +1};
-    const float position_scale = 270.0/360.0;
+	const std::array<int16_t, num_joints> dir = { +1, +1, +1};
+	const float position_scale = 270.0/360.0;
 
-    const std::array<SoC_t,13> SoC_table = {{{ 4.2, 100.00 },
-                                            { 4.1,  96.48 },
-                                            { 4.0,  88.58 },
-                                            { 3.9,  79.53 },
-                                            { 3.8,  69.74 },
-                                            { 3.7,  57.03 },
-                                            { 3.6,  44.66 },
-                                            { 3.5,  29.63 },
-                                            { 3.4,  17.95 },
-                                            { 3.3,   9.45 },
-                                            { 3.2,   3.95 },
-                                            { 3.1,   1.29 },
-                                            { 3.0,   0.00 }}};
-
-
-
+	/* simple SoC estimation from open battery voltage */
+	const std::array<SoC_t,13> SoC_table = {{{ 4.2, 100.00 },
+	                                         { 4.1,  96.48 },
+	                                         { 4.0,  88.58 },
+	                                         { 3.9,  79.53 },
+	                                         { 3.8,  69.74 },
+	                                         { 3.7,  57.03 },
+	                                         { 3.6,  44.66 },
+	                                         { 3.5,  29.63 },
+	                                         { 3.4,  17.95 },
+	                                         { 3.3,   9.45 },
+	                                         { 3.2,   3.95 },
+	                                         { 3.1,   1.29 },
+	                                         { 3.0,   0.00 }}};
 
 } /* namespace constants */
 
 class FlatcatRobot : public robots::Robot_Interface
 {
 public: //TODO undo "all public"
-    supreme::motorcord     motorcord;
-    supreme::sensorimotor& battery;
+	supreme::motorcord     motorcord;
+	supreme::sensorimotor& battery;
 
-    std::size_t number_of_joints;
-    std::size_t number_of_joints_sym;
-    std::size_t number_of_accels;
+	std::size_t number_of_joints;
+	std::size_t number_of_joints_sym;
+	std::size_t number_of_accels;
 
-    robots::Jointvector_t joints;
-    robots::Accelvector_t accels;
+	robots::Jointvector_t joints;
+	robots::Accelvector_t accels;
 
-    bool enabled = false;
+	bool enabled = false;
 
-    struct FlatcatStatus_t
-    {
-        float Umot = 5.0f;
-        float Ubus = 5.0f;
-        float Ubat = 3.6f;
-        float Ilim = 0.0f;
-        float Imot = 0.0f;
-        float SoC  = 50.f;
-        uint8_t ttlive = 10;
-        uint8_t state = 0;
-        uint16_t flags = 0;
-        std::string flag_str = "";
-        std::string state_str = "";
-        struct MotorcordStatus_t {
-            unsigned errors = 0;
-            unsigned timeouts = 0;
-        } motorcord;
-    } status;
+	struct FlatcatStatus_t
+	{
+		float Umot = 5.0f;
+		float Ubus = 5.0f;
+		float Ubat = 3.6f;
+		float Ilim = 0.0f;
+		float Imot = 0.0f;
+		float SoC  = 50.f;
+		uint8_t ttlive = 10;
+		uint8_t state = 0;
+		uint16_t flags = 0;
+		std::string flag_str = "";
 
-    enum StatusBits : uint8_t
-    {
-	    button_pressed      =  0,
-	    charger_connected   =  1,
-	    battery_charging    =  2,
-	    limiter_fault       =  3,
-	    vbus_charging       =  4,
-	    no_battery_inserted =  5,
-    //	reserved_6          =  6,
-	    shutdown_initiated  =  7,
-	    vbat_ov_warning     =  8,
-	    vbat_uv_warning     =  9,
-	    vbat_uv_error       = 10,
-	    vbus_ov_warning     = 11,
-	    vbus_uv_warning     = 12,
-    //	reserved_13         = 13,
-    //	reserved_14         = 14,
-    //	reserved_15         = 15,
-    };
+		struct MotorcordStatus_t {
+			unsigned errors = 0;
+			unsigned timeouts = 0;
+		} motorcord;
+	} status;
 
-
-    enum class FlatcatState_t
-    {
-        initializing = 0,
-        paused       = 1,
-        active       = 2,
-        halting      = 3,
-    } state ;
+	enum StatusBits : uint8_t
+	{
+		button_pressed      =  0,
+		charger_connected   =  1,
+		battery_charging    =  2,
+		limiter_fault       =  3,
+		vbus_charging       =  4,
+		no_battery_inserted =  5,
+	//	reserved_6          =  6,
+		shutdown_initiated  =  7,
+		vbat_ov_warning     =  8,
+		vbat_uv_warning     =  9,
+		vbat_uv_error       = 10,
+		vbus_ov_warning     = 11,
+		vbus_uv_warning     = 12,
+	//  reserved_13         = 13,
+	//  reserved_14         = 14,
+	//  reserved_15         = 15,
+	};
 
 
-    /*TODO: enum class FlatcatState_t {
-
-    }*/
+	enum class FlatcatState_t
+	{
+		initializing = 0,
+		resting      = 1,
+		active       = 2,
+		halting      = 3,
+	} state = FlatcatState_t::initializing;
 
 public:
 
 
-    FlatcatRobot(FlatcatSettings const& settings)
-    : motorcord(constants::num_joints+1/*+bat*/, settings.update_rate_Hz, false)
-    , battery(motorcord[3])
-    , number_of_joints(constants::num_joints)
-    , number_of_joints_sym(/* will be counted */)
-    , number_of_accels(1)
-    , joints()
-    , accels()
-    , status()
-    , state(FlatcatState_t::initializing)
-    {
+	FlatcatRobot(FlatcatSettings const& settings)
+	: motorcord( constants::num_joints + 1/*battery*/
+	           , settings.update_rate_Hz
+	           , /*verbose=*/false
+	           , settings.serial_devicename
+	           , /*disable_at_exit=*/false
+	           )
+	, battery(motorcord[3])
+	, number_of_joints(constants::num_joints)
+	, number_of_joints_sym(/* will be counted */)
+	, number_of_accels(1)
+	, joints()
+	, accels()
+	, status()
+	{
+		assert(motorcord.size() == constants::num_joints+1); // incl. bat
+		sts_msg("Creating Flatcat Robot Interface");
+		joints.reserve(number_of_joints);
 
-        assert(motorcord.size() == constants::num_joints+1); // incl. bat
-        sts_msg("Creating Flatcat Robot Interface");
-        joints.reserve(number_of_joints);
+		/* define joints */
+		joints.emplace_back( 0, robots::Joint_Type_Normal, 0, "HEAD" , -0.75, +0.75, .0 );
+		joints.emplace_back( 1, robots::Joint_Type_Normal, 1, "MIDL" , -0.75, +0.75, .0 );
+		joints.emplace_back( 2, robots::Joint_Type_Normal, 2, "TAIL" , -0.75, +0.75, .0 );
 
-        /* define joints */
-        joints.emplace_back( 0, robots::Joint_Type_Normal, 0, "HEAD" , -0.75, +0.75, .0 );
-        joints.emplace_back( 1, robots::Joint_Type_Normal, 1, "MIDL" , -0.75, +0.75, .0 );
-        joints.emplace_back( 2, robots::Joint_Type_Normal, 2, "TAIL" , -0.75, +0.75, .0 );
+		unsigned i = 0;
+		for (auto const& j : joints) {
+			assert(j.joint_id == i++);
+			if (j.is_symmetric()) ++number_of_joints_sym; // count symmetric joints
+		}
 
-        unsigned i = 0;
-        for (auto const& j : joints) {
-            assert(j.joint_id == i++);
-            if (j.is_symmetric()) ++number_of_joints_sym; // count symmetric joints
-        }
+		accels.emplace_back();
 
-        accels.emplace_back();
-
-        /* configure joints */
-        assertion(settings.joint_offsets.size() == joints.size(), "%u =!= %u", settings.joint_offsets.size(), joints.size());
+		/* configure joints */
+		assertion(settings.joint_offsets.size() == joints.size(), "%u =!= %u", settings.joint_offsets.size(), joints.size());
         for (auto const& j : joints) {
             unsigned i = j.joint_id;
             assert(i < constants::num_joints);
@@ -156,6 +155,8 @@ public:
             m.set_scalefactor(constants::position_scale   );
             m.set_offset     (settings.joint_offsets.at(i));
         }
+
+		state = FlatcatState_t::active;
     }
 
     std::size_t get_number_of_joints           (void) const { return number_of_joints;     }
@@ -209,22 +210,22 @@ public:
         update_status_data();
     }
 
-    void write_motorcord(void) {
-        for (auto& j : joints) {
-            auto& m = motorcord[j.joint_id];
-            if (enabled) {
-                m.set_target_csl_mode( j.motor.get() );
-            }
-            j.motor.transfer();
-            j.motor = .0f;
-        }
-    }
+	void write_motorcord(void) {
+		for (auto& j : joints) {
+			auto& m = motorcord[j.joint_id];
+			if (enabled) {
+				m.set_target_csl_mode( j.motor.get() );
+				}
+			j.motor.transfer();
+			j.motor = .0f;
+		}
+	}
 
-    void set_enable(bool value) { enabled = value; }
+	void set_enable(bool value) { enabled = value; }
 
-    void disable_motors(void) {
+	void inhibit(void) {
 		for (auto& j : joints)
-            motorcord[j.joint_id].set_target_csl_mode(.0);
+			motorcord[j.joint_id].set_target_csl_mode(.0);
 	}
 
     /* non-robot interface member function */
@@ -235,10 +236,12 @@ public:
     supreme::motorcord      & set_motors(void)       { return motorcord; }
 
 
-    FlatcatStatus_t const& get_status(void) const { return status; }
+	FlatcatStatus_t const& get_status(void) const { return status; }
 
-    bool is_charger_connected(void) const { return status.flags & (1 << StatusBits::charger_connected); }
-    bool is_button_pressed(void) const { return status.flags & (1 << StatusBits::button_pressed); }
+	bool is_charger_connected(void) const { return status.flags & (1 << StatusBits::charger_connected); }
+	bool is_button_pressed(void) const { return status.flags & (1 << StatusBits::button_pressed); }
+
+	bool is_resting(void) const { return state == FlatcatState_t::resting; }
 
 private:
 
@@ -277,18 +280,6 @@ private:
         status.state    = dat[7];
         status.flags    = dat[8]*256 + dat[9];
         status.flag_str = std::bitset<sizeof(status.flags) * 8>(status.flags).to_string();
-
-        /* get battery module status */
-        std::string state_str = "";
-        switch(status.state) {
-            case 0: state_str = "initializing     "; break;
-	        case 1: state_str = "powered off      "; break;
-	        case 2: state_str = "shutting down    "; break;
-	        case 3: state_str = "notify subsystems"; break;
-	        case 4: state_str = "standby vbus low "; break;
-	        case 5: state_str = "active vbus high "; break;
-            default: break;
-        }
     }
 
 };
@@ -296,4 +287,3 @@ private:
 } /* namespace supreme */
 
 #endif /* FLATCAT_ROBOT_HPP */
-

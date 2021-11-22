@@ -37,28 +37,24 @@
 
 namespace supreme {
 
-  // commandline option parsing
-  char* getCmdOption(char ** begin, char ** end, const std::string & option)
-  {
-    char ** itr = std::find(begin, end, option);
-    if (itr != end && ++itr != end)
-      {
-        return *itr;
-      }
-    return 0;
-  }
+	// commandline option parsing
+	char* getCmdOption(char ** begin, char ** end, const std::string & option) {
+		char ** itr = std::find(begin, end, option);
+		if (itr != end && ++itr != end)
+			return *itr;
+		return 0;
+	}
 
-  // commandline option exist
-  bool cmdOptionExists(char** begin, char** end, const std::string& option)
-  {
-    return std::find(begin, end, option) != end;
-  }
+	// commandline option exist
+	bool cmdOptionExists(char** begin, char** end, const std::string& option) {
+		return std::find(begin, end, option) != end;
+	}
 
 
 class ButtonPauseStatus {
-    bool state = false;
-    bool pressed = false;
-    bool paused = false;
+	bool state = false;
+	bool pressed = false;
+	bool paused = false;
 public:
 
     bool execute_cycle(bool s)
@@ -81,19 +77,20 @@ public:
 class MainApplication
 {
 public:
-    MainApplication(int argc, char** argv, GlobalFlag& exitflag)
-    : settings(argc, argv)
-    , exitflag(exitflag)
-    , robot(settings)
-    , control(robot, settings)
-    , timer( static_cast<uint64_t>(constants::us_per_sec/settings.update_rate_Hz), /*enable=*/true )
-    , motors_log(robot.motorcord)
-    , logger(argc, argv)
-    , learning(robot, control, settings)
-    , com(robot, settings, exitflag, learning)
-    , watch()
-    , button()
-    {
+	MainApplication(int argc, char** argv, GlobalFlag& exitflag)
+	: settings(argc, argv)
+	, exitflag(exitflag)
+	, robot(settings)
+	, control(robot, settings)
+	, timer_mainloop( static_cast<uint64_t>(constants::us_per_sec/settings.update_rate_Hz), /*enable=*/true )
+	, timer_shutdown(constants::us_per_sec*60*settings.time_to_shutdown_min)
+	, motors_log(robot.motorcord)
+	, logger(argc, argv)
+	, learning(robot, control, settings)
+	, com(robot, settings, exitflag, learning)
+	, watch()
+	, button()
+	{
 
         if (std::experimental::filesystem::exists(settings.save_folder)) {
             if (settings.clear_state) {
@@ -132,29 +129,26 @@ public:
     }
 
 private:
-    FlatcatSettings             settings;
-    GlobalFlag&                 exitflag;
+	FlatcatSettings             settings;
+	GlobalFlag&                 exitflag;
 
-    /* robot baseline */
-    FlatcatRobot                robot;
-    FlatcatControl              control;
-    SimpleTimer                 timer;
-    Motor_Log                   motors_log;
-    Datalog                     logger;
-    FlatcatLearning             learning;
-    FlatcatCommunication        com;
+	/* robot baseline */
+	FlatcatRobot                robot;
+	FlatcatControl              control;
+	SimpleTimer                 timer_mainloop, timer_shutdown;
+	Motor_Log                   motors_log;
+	Datalog                     logger;
+	FlatcatLearning             learning;
+	FlatcatCommunication        com;
 
-    Stopwatch                   watch;
-    ButtonPauseStatus           button;
-
-
-    unsigned long cycles = 0;
-
-    bool inhibited = false;
-    bool paused = false;
+	Stopwatch                   watch;
+	ButtonPauseStatus           button;
 
 
+	unsigned long cycles = 0;
+	unsigned remaining_time_us = 0; // TODO move
+
+	bool paused_by_user = false; // TODO move 
 };
 
 } /* namespace supreme */
-

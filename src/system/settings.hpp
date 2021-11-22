@@ -28,6 +28,7 @@ namespace defaults {
     const float motor_csl_param_gi = 1.5;
     const unsigned motor_pwm_frequency = 22500;
 
+	const unsigned time_to_shutdown_min = 15; // 15 minutes
 }
 
 namespace constants {
@@ -49,13 +50,15 @@ public:
     unsigned udp_port = 1900;
     std::string group = "224.0.0.1";//"239.255.255.252";
 
-
+    const char* serial_devicename = "ttyUSB0";
     const float update_rate_Hz = 100.0f;
     const float normed_active_bus_voltage = 1.0;
 
     float voltage_disable_motors;
     float voltage_regenerate_lo;
     float voltage_regenerate_hi;
+    unsigned time_to_shutdown_min;
+
 
     /* CSL motor control */
     float motor_voltage_limit;
@@ -91,6 +94,7 @@ public:
     , voltage_disable_motors(read_float("voltage_disable_motors" , defaults::voltage_disable_motors  ))
     , voltage_regenerate_lo (read_float("voltage_regenerate_lo"  , defaults::voltage_regenerate_lo   ))
     , voltage_regenerate_hi (read_float("voltage_regenerate_hi"  , defaults::voltage_regenerate_hi   ))
+    , time_to_shutdown_min  (read_uint ("time_to_shutdown_min"   , defaults::time_to_shutdown_min    ))
     , motor_voltage_limit   (read_float("motor_voltage_limit"    , defaults::motor_voltage_limit     ))
     , motor_csl_param_gf    (read_float("motor_csl_param_gf"     , defaults::motor_csl_param_gf      ))
     , motor_csl_param_gi    (read_float("motor_csl_param_gi"     , defaults::motor_csl_param_gi      ))
@@ -108,4 +112,3 @@ public:
 } /* namespace supreme */
 
 #endif /* FLATCAT_SETTINGS_HPP */
-

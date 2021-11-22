@@ -44,7 +44,7 @@ public:
     : sensors(joint)
     , payload(number_of_experts)
     , expert(number_of_experts, payload, sensors, local_learning_rate, gmes_constants::random_weight_range, experience_size)
-    , gmes(expert, global_learning_rate)
+    , gmes(expert, global_learning_rate, true, gmes_constants::number_of_initial_experts, joint.name)
     {
         assert(sensors.size() >= 3);
         sts_msg("Created GMES joint.");
@@ -203,8 +203,7 @@ public:
     : activation(inputs)
     , payload(num_experts, actions, num_policies, initial_Q)
     , experts(num_experts, payload, activation, local_learning_rate, gmes_constants::random_weight_range, experience_size)
-    , gmes(experts, gmes_learning_rate)
-
+    , gmes(experts, gmes_learning_rate, true, gmes_constants::number_of_initial_experts, "Layer")
     {}
 
     void execute_cycle() {

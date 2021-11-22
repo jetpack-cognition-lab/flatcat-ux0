@@ -63,7 +63,7 @@ public:
     {
 
         /* CSL settings */
-        for (unsigned i = 0; i < 3; ++i) {
+        for (unsigned i = 0; i < robot.get_number_of_joints(); ++i) {
             robot.motorcord[i].set_voltage_limit(settings.motor_voltage_limit);
             robot.motorcord[i].set_pwm_frequency(settings.motor_pwm_frequency);
             robot.motorcord[i].set_disable_position_limits(-0.9,0.9);
@@ -78,7 +78,6 @@ public:
 
         /* set battery active level to maximum */
         robot.battery.set_voltage_limit(1.0);
-
     }
 
     void execute_cycle(void)
@@ -98,12 +97,13 @@ public:
     }
 
     void disable(void) {
-        robot.motorcord.disable_all();
+        for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i)
+            robot.motorcord[i].disable();
         enabled = false;
     }
 
     void set_resting_mode(void) {
-        for (std::size_t i = 0; i < robot.motorcord.size()-1; ++i) {
+        for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i) {
             robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
             float mode = robot.motorcord[i].get_csl().get_mode();
 		    mode += 0.01*(constants::csl_release_mode - mode);
@@ -113,7 +113,7 @@ public:
     }
 
     void set_active_mode(void) {
-        for (std::size_t i = 0; i < robot.motorcord.size()-1; ++i) {
+        for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i) {
 			robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
             float mode = robot.motorcord[i].get_csl().get_mode();
             mode += 0.01*(1.0/*csl_tar_mode[i]*/ - mode);
@@ -124,14 +124,14 @@ public:
 
     void set_motor_voice(void) {
         /* set tones for all motors */
-	    for (std::size_t i = 0; i < robot.motorcord.size()-1; ++i)
+	    for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i)
         if (robot.motorcord[i].is_active())
 	    {
-		    auto& m = robot.motorcord[i];
-		    auto const& data = m.get_data();
+/*TODO:
+			auto const& data = robot.motorcord[i].get_data();
 
 
-		    /*TODO: if (csl_cur_mode[i] > .9
+		    if (csl_cur_mode[i] > .9
 		    and fabs(data.output_voltage) > 0.01
 		    and fabs(data.output_voltage) < 0.02)
 			    m.set_pwm_frequency(tonetable[3*i+2]);
@@ -146,4 +146,3 @@ public:
 } /* namespace supreme */
 
 #endif /* FLATCAT_CONTROL_HPP */
-

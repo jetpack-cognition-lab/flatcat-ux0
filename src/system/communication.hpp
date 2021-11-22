@@ -227,4 +227,3 @@ public:
 
 
 #endif /* FLATCAT_COMMUNICATION_HPP */
-
