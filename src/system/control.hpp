@@ -43,6 +43,7 @@ class FlatcatControl {
 public:
 
     bool enabled = false;
+	bool paused_by_user = false;
 
     FlatcatRobot&             robot;
     FlatcatSettings const&    settings;

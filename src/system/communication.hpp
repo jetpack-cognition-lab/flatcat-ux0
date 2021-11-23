@@ -7,37 +7,19 @@
 #include <common/socket_server.h>
 #include <common/log_messages.h>
 
+#include "../system/parse_commands.hpp"
+#include "../system/handle_commands.hpp"
 #include "../learning/learning.hpp"
 
 namespace supreme {
 
-inline bool starts_with(std::string msg, const char c_str[]) { return (msg.compare(0, strlen(c_str), c_str) == 0); }
-
-template <typename T>
-void parse_command(T& result, std::string const& msg, const char* keystr) {
-    T value;
-    if (1 == sscanf(msg.c_str(), keystr, &value)) {
-        result = static_cast<T>(value);
-        //dbg_msg("'%s' command received.", keystr);
-    } else wrn_msg("'%s' command broken.", keystr);
-}
-
-
-template <typename Vector_t>
-void parse_midi_channel(Vector_t& vec, std::string const& msg) {
-    unsigned idx;
-    float value;
-    if (2 == sscanf(msg.c_str(), "MDI%u=%f", &idx, &value) and idx < vec.size()) {
-        vec.at(idx) = value;
-        //dbg_msg("MIDI %02u = %+5.2f", idx, value);
-    } else wrn_msg("Midi command broken.", msg);
-}
 
 
 class FlatcatCommunication {
 
-    FlatcatRobot& robot;
-    GlobalFlag const& exitflag;
+    FlatcatRobot&              robot;
+    FlatcatControl&            control;
+    GlobalFlag const&          exitflag;
 
     network::Socket_Server     tcp_server;
 
@@ -47,13 +29,6 @@ class FlatcatCommunication {
     FlatcatLearning const& learning;
 
     bool tcp_connected = false;
-
-    struct DummyControl_t {
-        bool enabled = true;
-        unsigned tar_mode = 0;
-        std::array<float, 256> usr_params;
-    } control;
-
 
     uint8_t reserved_8 = 0;
     float   reserved32 = 0;
@@ -67,11 +42,13 @@ public:
 
 
     FlatcatCommunication( FlatcatRobot& robot
+                        , FlatcatControl& control
                         , FlatcatSettings const& settings
                         , GlobalFlag const& exitflag
                         , FlatcatLearning const& learning
                         )
     : robot(robot)
+    , control(control)
     , exitflag(exitflag)
     , tcp_server(settings.tcp_port)
     , udp_sender(settings.group, settings.udp_port)
@@ -82,6 +59,8 @@ public:
     {
         sts_msg("starting robot network communication module");
     }
+
+	bool is_connected(void) const { return tcp_connected; }
 
     void execute_cycle(uint64_t cycle)
     {
@@ -173,13 +152,18 @@ public:
         sendbuffer.add_checksum();
     }
 
+
     void handle_tcp_commands(std::string const& msg)
     {
-        if (starts_with(msg, "ENA")) { parse_command(control.enabled        , msg, "ENA=%u"); return; }
-        if (starts_with(msg, "CTL")) { parse_command(control.tar_mode       , msg, "CTL=%u"); return; }
-        if (starts_with(msg, "MDI")) { parse_midi_channel(control.usr_params, msg          ); return; }
+        if (starts_with(msg, "PAU")) { recv_variable(control.paused_by_user, msg, "PAU=%u"  ); return; }
+        if (starts_with(msg, "MOD")) { recv_variable(control.tar_mode      , msg, "MOD=%u"  ); return; }
+        if (starts_with(msg, "USR")) { recv_vector  (control.usr_params    , msg, "USR%u=%f"); return; }
 
-        if (msg == "HELLO") { sts_msg("client says hello"   ); return; }
+        if (msg == "paused") { send_variable(tcp_server, control.paused_by_user, "paused");    return; }
+        if (msg == "SoC"   ) { send_variable(tcp_server, robot.status.SoC      , "SoC");       return; }
+        if (msg == "flags" ) { send_variable(tcp_server, robot.status.flags    , "flags");     return; }
+
+        if (msg == "HELLO" ) { sts_msg("client says hello");                                   return; }
 
         dbg_msg("unknown msg: %s", msg.c_str());
     }

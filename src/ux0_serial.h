@@ -87,7 +87,7 @@ public:
 	, motors_log(robot.motorcord)
 	, logger(argc, argv)
 	, learning(robot, control, settings)
-	, com(robot, settings, exitflag, learning)
+	, com(robot, control, settings, exitflag, learning)
 	, watch()
 	, button()
 	{
@@ -148,7 +148,6 @@ private:
 	unsigned long cycles = 0;
 	unsigned remaining_time_us = 0; // TODO move
 
-	bool paused_by_user = false; // TODO move 
 };
 
 } /* namespace supreme */

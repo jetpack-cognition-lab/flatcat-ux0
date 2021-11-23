@@ -52,7 +52,8 @@ public:
 
     const char* serial_devicename = "ttyUSB0";
     const float update_rate_Hz = 100.0f;
-    const float normed_active_bus_voltage = 1.0;
+    const float normed_active_bus_voltage = 1.0;   // =6V
+	const float normed_resting_bus_voltage = 0.35; // =5V
 
     float voltage_disable_motors;
     float voltage_regenerate_lo;

@@ -29,7 +29,7 @@ MainApplication::execute_cycle(void)
 	auto const& status = robot.get_status();
 
 
-	paused_by_user = button.execute_cycle(robot.is_button_pressed());
+	control.paused_by_user = button.execute_cycle(robot.is_button_pressed());
 
 	/* print on terminal each second */
 	if (cycles % 100 == 0)
@@ -43,11 +43,14 @@ MainApplication::execute_cycle(void)
 	control.set_motor_voice();
 
 	/* check charger connected or paused -> resting with standby bus power */
-	if (robot.is_charger_connected() or paused_by_user) {
+	if (robot.is_charger_connected() or control.paused_by_user) {
+		robot.battery.set_controller_type(supreme::sensorimotor::Controller_t::voltage);
+		robot.battery.set_target_voltage(settings.normed_resting_bus_voltage);
 		control.disable();
 		robot.state = FlatcatRobot::FlatcatState_t::resting;
 		learning.enabled = false;
-		timer_shutdown.start();
+		if (not com.is_connected())
+			timer_shutdown.start();
 	}
 	else {
 		robot.battery.set_controller_type(supreme::sensorimotor::Controller_t::voltage);
@@ -87,8 +90,12 @@ MainApplication::execute_cycle(void)
 	if (cycles % settings.learning_save_cycles == 0)
 		save(settings.save_folder); // save learning data
 
-	if (timer_shutdown.is_timed_out())
+	if (timer_shutdown.is_timed_out()) {
+		sts_msg("Exceeded standby time of %u minutes.\n"
+		        "Sending shutdown request to Energy Module."
+		       , settings.time_to_shutdown_min);
 		robot.battery.disable();
+	}
 
 	/* shutdown */
 	bool is_shutdown_signaled = status.ttlive < 10;
@@ -139,7 +146,7 @@ int main(int argc, char* argv[])
 			sts_msg("DONE.");
 			sts_msg("________\nSHUTDOWN");
 			if (0 != system("sudo shutdown -h now"))
-				wrn_msg("Error while calling shutdown command."); 
+				wrn_msg("Error while calling shutdown command.");
 			return EXIT_FAILURE;
 		}
 	}
