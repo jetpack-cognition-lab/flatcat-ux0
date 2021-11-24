@@ -243,6 +243,11 @@ public:
 
 	bool is_resting(void) const { return state == FlatcatState_t::resting; }
 
+	void set_bus_voltage(float voltage) {
+		battery.set_controller_type(supreme::sensorimotor::Controller_t::voltage);
+		battery.set_target_voltage(voltage);
+	}
+
 private:
 
     void update_status_data(void) {

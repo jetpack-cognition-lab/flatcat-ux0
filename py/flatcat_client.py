@@ -20,7 +20,10 @@ class Flatcat:
 
     def parse_message(self, msg):
         li = msg.split("=", 1)
-        return li[1]
+        if len(li)>1:
+            return li[1]
+        print("message faulted: {0}".format(msg))
+        return ""
 
 
     def loop(self):
@@ -32,27 +35,49 @@ class Flatcat:
         time.sleep(1)
         return True
 
+    def receive(self):
+        try:
+            msg=self.sock.recv(bufsize)
+            #print("received <{0}>".format(msg))
+            return msg
+        except KeyboardInterrupt:
+            print("aborted")
+        return ""
+
+    def send(self, msg):
+        #print("sending message: <{0}>".format(msg))
+        self.sock.send(msg)
 
     def request_variable(self, keystr):
         cmd = keystr+"\n"
-        self.sock.send(cmd)
+        self.send(cmd)
         return self.receive_variable()
 
 
     def receive_variable(self):
-        msg = self.sock.recv(bufsize)
+        msg = self.receive()
         return self.parse_message(msg)
+
+
+    def receive_ack(self):
+        if (self.receive() != "ACK\n"): 
+            print("No response")
 
 
     def send_variable(self, keystr, value):
         cmd = "{0}={1}\n".format(keystr, value)
-        print("sending command: {0}".format(cmd))
-        self.sock.send(cmd)
+        self.send(cmd)
+        self.receive_ack()
+
+
+    def send_command(self, cmd):
+        self.send(cmd)
+        self.receive_ack()
 
 
     def exit_server(self):
         cmd = "EXIT\n"
-        self.sock.send(cmd)
+        self.send(cmd)
         self.sock.close()
 
 # end class Flatcat
@@ -65,10 +90,9 @@ def main(argv):
         sys.exit()
 
     result = True
-    robot.send_variable("PAU", 1) # disable robot
 
-    time.sleep(1.) 
-    #TODO remove this when multiple commands in 1 msg work
+    robot.send_command("HELLO\n")
+    robot.send_variable("PAUSE", 1) # disable robot    
 
     while (result):
         try:

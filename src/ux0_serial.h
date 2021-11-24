@@ -54,24 +54,19 @@ namespace supreme {
 class ButtonPauseStatus {
 	bool state = false;
 	bool pressed = false;
-	bool paused = false;
+	//bool paused = false;
 public:
 
-    bool execute_cycle(bool s)
-    {
-        bool state = s;
-	    if (pressed and !state) {
-		    if (paused) {
-			    paused = false;
-		    } else {
-			    paused = true;
-		    }
-	    }
-	    pressed = state;
-        return paused;
-    }
+	bool execute_cycle(bool s, bool paused)
+	{
+		bool state = s;
+		if (pressed and !state)
+			paused = !paused;
+		pressed = state;
+		return paused;
+	}
 
-    bool is_paused(void) const { return paused; }
+	//bool is_paused(void) const { return paused; }
 };
 
 class MainApplication

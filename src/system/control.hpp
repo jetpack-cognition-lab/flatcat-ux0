@@ -19,21 +19,21 @@ typedef std::array<float, constants::num_joints> TargetPosition_t;
 
 enum class ControlMode_t : uint8_t
 {
-    none,
-    position,
-    csl_hold,
-    behavior,
-    END_ControlMode_t
+	none,
+	position,
+	csl_hold,
+	behavior,
+	END_ControlMode_t
 };
 
 namespace constants {
 
-    const float Kp = 3.0f;
-    const float Ki = 0.01f;
-    const float Kd = 0.0f;
+	const float Kp = 3.0f;
+	const float Ki = 0.01f;
+	const float Kd = 0.0f;
 
-    const std::array<const char*, (unsigned) ControlMode_t::END_ControlMode_t> mode_str = { "NONE", "POS", "HOLD", "BEHV" };
-    const float csl_release_mode = 0.0f;
+	const std::array<const char*, (unsigned) ControlMode_t::END_ControlMode_t> mode_str = { "NONE", "POS", "HOLD", "BEHV" };
+	const float csl_release_mode = 0.0f;
 
 } /* constants */
 
@@ -42,26 +42,25 @@ namespace constants {
 class FlatcatControl {
 public:
 
-    bool enabled = false;
 	bool paused_by_user = false;
 
-    FlatcatRobot&             robot;
-    FlatcatSettings const&    settings;
-    TargetPosition_t          usr_params;     // for testing and demo
+	FlatcatRobot&             robot;
+	FlatcatSettings const&    settings;
+	TargetPosition_t          usr_params;     // for testing and demo
 
-    ControlMode_t             cur_mode, tar_mode;
+	ControlMode_t             cur_mode, tar_mode;
 
-    std::vector<float> csl_tar_mode = {0.0f, 0.0f, 0.0f};
-    std::vector<float> csl_cur_mode = {0.0f, 0.0f, 0.0f};
+	std::vector<float> csl_tar_mode = {0.0f, 0.0f, 0.0f};
+	std::vector<float> csl_cur_mode = {0.0f, 0.0f, 0.0f};
 
 
-    FlatcatControl(FlatcatRobot& robot, FlatcatSettings const& settings)
-    : robot(robot)
-    , settings(settings)
-    , usr_params()
-    , cur_mode(ControlMode_t::none)
-    , tar_mode(ControlMode_t::none)
-    {
+	FlatcatControl(FlatcatRobot& robot, FlatcatSettings const& settings)
+	: robot(robot)
+	, settings(settings)
+	, usr_params()
+	, cur_mode(ControlMode_t::none)
+	, tar_mode(ControlMode_t::none)
+	{
 
         /* CSL settings */
         for (unsigned i = 0; i < robot.get_number_of_joints(); ++i) {
@@ -74,21 +73,13 @@ public:
             robot.motorcord[i].set_target_csl_gain(settings.motor_csl_param_gi);
             robot.motorcord[i].set_target_csl_mode(constants::csl_release_mode);
             robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
-
         }
 
         /* set battery active level to maximum */
         robot.battery.set_voltage_limit(1.0);
     }
 
-    void execute_cycle(void)
-    {
-
-        if (enabled)
-        {
-            //TODO:
-        }
-    }
+    void execute_cycle(void) { /*not implemented yet*/ }
 
     void set_modes(float head, float body, float tail)
     {
@@ -97,11 +88,10 @@ public:
         csl_tar_mode[2] = tail;
     }
 
-    void disable(void) {
-        for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i)
-            robot.motorcord[i].disable();
-        enabled = false;
-    }
+	void disable_motors(void) {
+		for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i)
+			robot.motorcord[i].disable();
+	}
 
     void set_resting_mode(void) {
         for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i) {

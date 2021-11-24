@@ -12,11 +12,10 @@ signal_terminate_handler(int signum)
 
 
 /* TODO: features
+	+ adjust CSL
 	+ set voltage level lower according to battery life
-	+ shutdown after 15min standby
 	+ buzz for button press (in booted mode)
 	+ can we detect the fur?
-	+ adjust CSL
 	+ version number, compile date
 */
 
@@ -28,8 +27,8 @@ MainApplication::execute_cycle(void)
 	robot.execute_cycle();
 	auto const& status = robot.get_status();
 
-
-	control.paused_by_user = button.execute_cycle(robot.is_button_pressed());
+	/* pause flag can also be set/cleared by the user via web ui */
+	control.paused_by_user = button.execute_cycle(robot.is_button_pressed(), control.paused_by_user);
 
 	/* print on terminal each second */
 	if (cycles % 100 == 0)
@@ -44,17 +43,15 @@ MainApplication::execute_cycle(void)
 
 	/* check charger connected or paused -> resting with standby bus power */
 	if (robot.is_charger_connected() or control.paused_by_user) {
-		robot.battery.set_controller_type(supreme::sensorimotor::Controller_t::voltage);
-		robot.battery.set_target_voltage(settings.normed_resting_bus_voltage);
-		control.disable();
+		robot.set_bus_voltage(settings.normed_resting_bus_voltage);
+		control.disable_motors();
 		robot.state = FlatcatRobot::FlatcatState_t::resting;
 		learning.enabled = false;
 		if (not com.is_connected())
 			timer_shutdown.start();
 	}
 	else {
-		robot.battery.set_controller_type(supreme::sensorimotor::Controller_t::voltage);
-		robot.battery.set_target_voltage(settings.normed_active_bus_voltage);
+		robot.set_bus_voltage(settings.normed_active_bus_voltage);
 		robot.state = FlatcatRobot::FlatcatState_t::active;
 		learning.enabled = true;
 		timer_shutdown.stop();
@@ -104,7 +101,7 @@ MainApplication::execute_cycle(void)
 		sts_msg("Shutdown flatcat due to %s", is_shutdown_signaled ? "BMS notified shutdown" : "unexpected power fail");
 		sts_msg("Last measurements: Ubat=%4.2f Ubus=%4.2f T=%02u F=%s"
 		       , status.Ubat, status.Ubus, status.ttlive, status.flag_str.c_str());
-		control.disable();
+		control.disable_motors();
 		robot.motorcord.execute_cycle(); // update motors before quitting
 		return false;
 	}

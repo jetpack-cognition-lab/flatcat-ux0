@@ -13,8 +13,6 @@
 
 namespace supreme {
 
-
-
 class FlatcatCommunication {
 
     FlatcatRobot&              robot;
@@ -64,8 +62,6 @@ public:
 
     void execute_cycle(uint64_t cycle)
     {
-        robot.set_enable(control.enabled);
-
         if (tcp_connected) {
             fill_sendbuffer(cycle);
             udp_sender.set_buffer(sendbuffer.get(), sendbuffer.size());
@@ -134,7 +130,7 @@ public:
         /* mirror controls */
         auto const& c = control;
         sendbuffer
-        .add(c.enabled )
+        .add(c.paused_by_user)
         .add(reserved_8)
         .add(reserved_8)
         .add(reserved_8)
@@ -153,20 +149,22 @@ public:
     }
 
 
-    void handle_tcp_commands(std::string const& msg)
-    {
-        if (starts_with(msg, "PAU")) { recv_variable(control.paused_by_user, msg, "PAU=%u"  ); return; }
-        if (starts_with(msg, "MOD")) { recv_variable(control.tar_mode      , msg, "MOD=%u"  ); return; }
-        if (starts_with(msg, "USR")) { recv_vector  (control.usr_params    , msg, "USR%u=%f"); return; }
+	void handle_tcp_commands(std::string const& msg)
+	{
+		//dbg_msg("handle command %s", msg.c_str());
 
-        if (msg == "paused") { send_variable(tcp_server, control.paused_by_user, "paused");    return; }
-        if (msg == "SoC"   ) { send_variable(tcp_server, robot.status.SoC      , "SoC");       return; }
-        if (msg == "flags" ) { send_variable(tcp_server, robot.status.flags    , "flags");     return; }
+		if (starts_with(msg, "PAUSE")) { recv_variable(tcp_server, control.paused_by_user, msg, "PAUSE=%u" ); return; }
+		if (starts_with(msg, "MODE" )) { recv_variable(tcp_server, control.tar_mode      , msg, "MODE=%u"  ); return; }
+		if (starts_with(msg, "USER" )) { recv_vector  (tcp_server, control.usr_params    , msg, "USER%u=%f"); return; }
 
-        if (msg == "HELLO" ) { sts_msg("client says hello");                                   return; }
+		if (msg == "paused") { send_variable(tcp_server, control.paused_by_user, "paused");    return; }
+		if (msg == "SoC"   ) { send_variable(tcp_server, robot.status.SoC      , "SoC");       return; }
+		if (msg == "flags" ) { send_variable(tcp_server, robot.status.flags    , "flags");     return; }
 
-        dbg_msg("unknown msg: %s", msg.c_str());
-    }
+		if (msg == "HELLO" ) { sts_msg("client says hello"); acknowledge(tcp_server); return; }
+
+		dbg_msg("unknown msg: %s", msg.c_str());
+	}
 
 
     void tcp_serv_loop(void)
