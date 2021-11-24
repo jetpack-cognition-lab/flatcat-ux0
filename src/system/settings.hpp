@@ -81,6 +81,7 @@ public:
     std::string save_folder = "./data/";
     bool clear_state;
 
+	bool initial_pause = false;
 
     /* gmes */
     struct GMES_Settings_t {
@@ -103,6 +104,7 @@ public:
     , joint_offsets         (read_vec  ("joint_offsets"          , defaults::joint_offsets           ))
     , save_state_name       (read_string_option(argc, argv, "-n", "--name", "default"                ))
     , clear_state           (read_option_flag  (argc, argv, "-c", "--clear"                          ))
+    , initial_pause         (read_option_flag  (argc, argv, "-p", "--pause"                          ))
     {
         save_folder += save_state_name + "/";
 

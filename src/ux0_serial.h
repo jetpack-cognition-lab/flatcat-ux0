@@ -103,6 +103,8 @@ public:
         if (logger.is_enabled())
             logger.log("Time_ms_____ Statusflags_____ TL S Ubat_ Ubus_%s", motors_log.header().c_str());
 
+		if (settings.initial_pause) control.paused_by_user = true;
+
     }
 
     void finish() {
