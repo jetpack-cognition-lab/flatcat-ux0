@@ -1,9 +1,8 @@
 #!/usr/bin/python
 
-import sys, socket, time
+import sys, socket, time, argparse
 
 # globals
-address  = "flatcat07.local"
 port     = 7332
 bufsize  = 4096
 MSG = '\033[93m' #orange terminal color
@@ -31,7 +30,7 @@ class Flatcat:
         self.soc = float( self.request_variable("SoC") )
         self.flags = int( self.request_variable("flags") )
         self.cycle += 1
-        print("{0:3d} SoC={1:4.1f} F={2:016b} en={3}".format(self.cycle, self.soc, self.flags, self.paused))
+        print("{0:3d} SoC={1:4.1f} F={2:016b} pause={3}".format(self.cycle, self.soc, self.flags, self.paused))
         time.sleep(1)
         return True
 
@@ -83,8 +82,13 @@ class Flatcat:
 # end class Flatcat
 
 def main(argv):
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-a', '--address', default="")
+    parser.add_argument('-p', '--port', default=port)
+    args = parser.parse_args()
+
     try:
-        robot = Flatcat(address, port)
+        robot = Flatcat(args.address, args.port)
     except:
         print(MSG + "No connection.\n")
         sys.exit()
@@ -92,7 +96,7 @@ def main(argv):
     result = True
 
     robot.send_command("HELLO\n")
-    robot.send_variable("PAUSE", 1) # disable robot    
+    robot.send_variable("PAUSE", 1) # disable robot
 
     while (result):
         try:
