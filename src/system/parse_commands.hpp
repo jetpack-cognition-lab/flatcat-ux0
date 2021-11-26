@@ -8,7 +8,7 @@ namespace supreme {
 	}
 
 	inline void acknowledge(network::Socket_Server& socket) {
-		dbg_msg("sending ACK");
+		//dbg_msg("sending ACK");
 		socket.send_message("ACK\n"); };
 
 	template <typename T>

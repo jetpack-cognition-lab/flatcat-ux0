@@ -52,6 +52,7 @@ class FlatcatRobot : public robots::Robot_Interface
 public: //TODO undo "all public"
 	supreme::motorcord     motorcord;
 	supreme::sensorimotor& battery;
+	FlatcatSettings const& settings;
 
 	std::size_t number_of_joints;
 	std::size_t number_of_joints_sym;
@@ -89,16 +90,16 @@ public: //TODO undo "all public"
 		limiter_fault       =  3,
 		vbus_charging       =  4,
 		no_battery_inserted =  5,
-	//	reserved_6          =  6,
+	// 	reserved_6          =  6,
 		shutdown_initiated  =  7,
 		vbat_ov_warning     =  8,
 		vbat_uv_warning     =  9,
 		vbat_uv_error       = 10,
 		vbus_ov_warning     = 11,
 		vbus_uv_warning     = 12,
-	//  reserved_13         = 13,
-	//  reserved_14         = 14,
-	//  reserved_15         = 15,
+	//	reserved_13         = 13,
+	//	reserved_14         = 14,
+	//	reserved_15         = 15,
 	};
 
 
@@ -121,6 +122,7 @@ public:
 	           , /*disable_at_exit=*/false
 	           )
 	, battery(motorcord[3])
+	, settings(settings)
 	, number_of_joints(constants::num_joints)
 	, number_of_joints_sym(/* will be counted */)
 	, number_of_accels(1)
@@ -147,68 +149,68 @@ public:
 
 		/* configure joints */
 		assertion(settings.joint_offsets.size() == joints.size(), "%u =!= %u", settings.joint_offsets.size(), joints.size());
-        for (auto const& j : joints) {
-            unsigned i = j.joint_id;
-            assert(i < constants::num_joints);
-            auto& m  = motorcord[i];
-            m.set_direction  (constants::dir.at(i)        );
-            m.set_scalefactor(constants::position_scale   );
-            m.set_offset     (settings.joint_offsets.at(i));
-        }
+		for (auto const& j : joints) {
+			unsigned i = j.joint_id;
+			assert(i < constants::num_joints);
+			auto& m  = motorcord[i];
+			m.set_direction  (constants::dir.at(i)        );
+			m.set_scalefactor(constants::position_scale   );
+			m.set_offset     (settings.joint_offsets.at(i));
+		}
 
 		state = FlatcatState_t::active;
-    }
+	}
 
-    std::size_t get_number_of_joints           (void) const { return number_of_joints;     }
-    std::size_t get_number_of_symmetric_joints (void) const { return number_of_joints_sym; }
-    std::size_t get_number_of_accel_sensors    (void) const { return number_of_accels;     }
+	std::size_t get_number_of_joints           (void) const { return number_of_joints;     }
+	std::size_t get_number_of_symmetric_joints (void) const { return number_of_joints_sym; }
+	std::size_t get_number_of_accel_sensors    (void) const { return number_of_accels;     }
 
-    const robots::Jointvector_t& get_joints(void) const { return joints; }
-          robots::Jointvector_t& set_joints(void)       { return joints; }
+	const robots::Jointvector_t& get_joints(void) const { return joints; }
+	      robots::Jointvector_t& set_joints(void)       { return joints; }
 
-    const robots::Accelvector_t& get_accels(void) const { return accels; }
-          robots::Accelvector_t& set_accels(void)       { return accels; }
+	const robots::Accelvector_t& get_accels(void) const { return accels; }
+	      robots::Accelvector_t& set_accels(void)       { return accels; }
 
-    bool execute_cycle(void)
-    {
-        //TODO: write_motorcord();          /* write motors     */
-        motorcord.execute_cycle();  /* read motor cord  */
+	bool execute_cycle(void)
+	{
+		//TODO: write_motorcord();  /* write motors     */
+		motorcord.execute_cycle();  /* read motor cord  */
 
-        status.motorcord.errors   = motorcord.get_errors();
-        status.motorcord.timeouts = motorcord.get_timeouts();
+		status.motorcord.errors   = motorcord.get_errors();
+		status.motorcord.timeouts = motorcord.get_timeouts();
 
-        read_motorcord();           /* read sensors     */
-        return true;
-    }
+		read_motorcord();           /* read sensors     */
+		return true;
+	}
 
-    double get_normalized_mechanical_power(void) const
-    {
-        float power = .0;
-        for (unsigned i = 0; i < motorcord.size(); ++i) {
-            auto const& m = motorcord[i];
-            power += m.get_data().voltage_supply * m.get_data().current;
-        }
-        return power;
-    }
+	double get_normalized_mechanical_power(void) const
+	{
+		float power = .0;
+		for (unsigned i = 0; i < motorcord.size(); ++i) {
+			auto const& m = motorcord[i];
+			power += m.get_data().voltage_supply * m.get_data().current;
+		}
+		return power;
+	}
 
-    void read_motorcord(void)
-    {
-        for (auto& j : joints) {
-            auto const& m = motorcord[j.joint_id];
-            j.s_ang = m.get_data().position;
-            j.s_vel = m.get_data().velocity_lpf;
-            j.s_vol = m.get_data().voltage_supply/constants::voltage_norm_V; // normalized to 1=6V
-            //TODO: current, temp,
-        }
+	void read_motorcord(void)
+	{
+		for (auto& j : joints) {
+			auto const& m = motorcord[j.joint_id];
+			j.s_ang = m.get_data().position;
+			j.s_vel = m.get_data().velocity_lpf;
+			j.s_vol = m.get_data().voltage_supply/constants::voltage_norm_V; // normalized to 1=6V
+			//TODO: current, temp,
+		}
 
-        /**TODO accelerometer
-        auto const& r0 = spinalcord.status_data.motors[0];
-        accels[0].a.x = +r0.acceleration.x;
-        accels[0].a.y = -r0.acceleration.z;
-        accels[0].a.z = +r0.acceleration.y; */
+		/**TODO accelerometer
+		auto const& r0 = spinalcord.status_data.motors[0];
+		accels[0].a.x = +r0.acceleration.x;
+		accels[0].a.y = -r0.acceleration.z;
+		accels[0].a.z = +r0.acceleration.y; */
 
-        update_status_data();
-    }
+		update_status_data();
+	}
 
 	void write_motorcord(void) {
 		for (auto& j : joints) {
@@ -228,12 +230,12 @@ public:
 			motorcord[j.joint_id].set_target_csl_mode(.0);
 	}
 
-    /* non-robot interface member function */
-    //SpinalCord::TimingStats const& get_motorcord_timing(void) const { return spinalcord.get_timing(); }
-    void reset_motor_statistics(void) { /**TODO spinalcord.reset_statistics();*/ }
+	/* non-robot interface member function */
+	//SpinalCord::TimingStats const& get_motorcord_timing(void) const { return spinalcord.get_timing(); }
+	void reset_motor_statistics(void) { /**TODO spinalcord.reset_statistics();*/ }
 
-    supreme::motorcord const& get_motors(void) const { return motorcord; }
-    supreme::motorcord      & set_motors(void)       { return motorcord; }
+	supreme::motorcord const& get_motors(void) const { return motorcord; }
+	supreme::motorcord      & set_motors(void)       { return motorcord; }
 
 
 	FlatcatStatus_t const& get_status(void) const { return status; }
@@ -248,43 +250,51 @@ public:
 		battery.set_target_voltage(voltage);
 	}
 
+	bool is_shutdown_signaled(void) {
+		return battery.is_active() and status.ttlive < 10;
+	}
+
+	bool is_powerfail(void) {
+		return battery.is_active() and status.Ubat < settings.voltage_emergency_shutdown;
+	}
+
 private:
 
-    void update_status_data(void) {
-        /* motors' voltages */
-        float Umot = std::min( motorcord[0].get_data().voltage_supply,
-                     std::min( motorcord[1].get_data().voltage_supply
-                             , motorcord[2].get_data().voltage_supply ));
+	void update_status_data(void) {
+		/* motors' voltages */
+		float Umot = std::min( motorcord[0].get_data().voltage_supply,
+		             std::min( motorcord[1].get_data().voltage_supply
+		                     , motorcord[2].get_data().voltage_supply ));
 
-        /* get energymodule's data */
-        auto const& dat = battery.get_data().raw_recv;
+		/* get energymodule's data */
+		auto const& dat = battery.get_data().raw_recv;
 
-        /* battery/charger voltage */
-        float Ubat = (dat[0]*256 + dat[1]) * 0.0001f; //.1 mV to V
+		/* battery/charger voltage */
+		float Ubat = (dat[0]*256 + dat[1]) * 0.0001f; //.1 mV to V
 
-        /* bus voltage measured by energymodule */
-        float Ubus = (dat[2]*256 + dat[3]) * 0.0001f; //.1 mV to V
+		/* bus voltage measured by energymodule */
+		float Ubus = (dat[2]*256 + dat[3]) * 0.0001f; //.1 mV to V
 
-        float Ilim = (dat[4]*256 + dat[5]) * 0.1f;    //.1 mA to mA
+		float Ilim = (dat[4]*256 + dat[5]) * 0.1f;    //.1 mA to mA
 
-        /* sum of motor currents */
-        float Imot = motorcord[0].get_data().current
-                   + motorcord[1].get_data().current
-                   + motorcord[2].get_data().current;
+		/* sum of motor currents */
+		float Imot = motorcord[0].get_data().current
+		           + motorcord[1].get_data().current
+		           + motorcord[2].get_data().current;
 
-        /* low-pass filters */
-        status.Umot = 0.99f * status.Umot + 0.01f * Umot;
-        status.Ubus = 0.99f * status.Ubus + 0.01f * Ubus;
-        status.Ubat = 0.99f * status.Ubat + 0.01f * Ubat;
-        status.Imot = 0.99f * status.Imot + 0.01f * Imot;
-        status.Ilim = 0.99f * status.Ilim + 0.01f * Ilim;
-        uint8_t soci= round(clip(4.2f - status.Ubat, 0.0f, 1.2f) * 10);
-        status.SoC  = constants::SoC_table[soci].soc;
+		/* low-pass filters */
+		status.Umot = 0.99f * status.Umot + 0.01f * Umot;
+		status.Ubus = 0.99f * status.Ubus + 0.01f * Ubus;
+		status.Ubat = 0.99f * status.Ubat + 0.01f * Ubat;
+		status.Imot = 0.99f * status.Imot + 0.01f * Imot;
+		status.Ilim = 0.99f * status.Ilim + 0.01f * Ilim;
+		uint8_t soci= round(clip(4.2f - status.Ubat, 0.0f, 1.2f) * 10);
+		status.SoC  = constants::SoC_table[soci].soc;
 
-        status.ttlive   = dat[6];
-        status.state    = dat[7];
-        status.flags    = dat[8]*256 + dat[9];
-        status.flag_str = std::bitset<sizeof(status.flags) * 8>(status.flags).to_string();
+		status.ttlive   = dat[6];
+		status.state    = dat[7];
+		status.flags    = dat[8]*256 + dat[9];
+		status.flag_str = std::bitset<sizeof(status.flags) * 8>(status.flags).to_string();
     }
 
 };

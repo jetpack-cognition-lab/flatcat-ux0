@@ -92,11 +92,23 @@ public:
 
     void fill_sendbuffer(uint64_t cycle) {
         sendbuffer.reset();
-        sendbuffer.add(cycle);
-        sendbuffer.add(reserved_8);
-        sendbuffer.add(reserved_8);
-        sendbuffer.add(reserved32);
-
+        sendbuffer.add(cycle)
+                  .add(robot.status.state )
+                  .add(robot.status.ttlive)
+                  .add(reserved_8         )
+                  .add(reserved_8         )
+                  .add(robot.status.flags )
+                  .add(robot.status.Umot  )
+                  .add(robot.status.Ubus  )
+                  .add(robot.status.Ubat  )
+                  .add(robot.status.Ilim  )
+                  .add(robot.status.Imot  )
+                  .add(robot.status.SoC   )
+                  .add(reserved32         )
+                  .add(reserved32         )
+                  .add(reserved32         )
+                  .add(reserved32         )
+                  ;
         /* N motors */
         for (unsigned i = 0; i < robot.get_motors().size()-1; ++i)
         {
@@ -120,8 +132,6 @@ public:
             .add(reserved32      )
             .add(reserved32      )
             .add(reserved32      )
-            .add(reserved32      )
-            .add(reserved32      )
             ;
         }
 
@@ -135,10 +145,8 @@ public:
         .add(reserved_8)
         .add(reserved_8)
         .add(reserved32)
-        .add(reserved32)
-        .add(reserved32)
-        .add(reserved64)
-        .add(reserved64)
+        .add(float(control.csl_settings.gf))
+        .add(float(control.csl_settings.gi))
         .add(reserved64)
         .add(static_cast<float  >(learning.super_layer.gmes.get_learning_progress()))
         .add(static_cast<uint8_t>(learning.super_layer.gmes.get_number_of_experts()))
@@ -156,6 +164,9 @@ public:
 		if (starts_with(msg, "PAUSE")) { recv_variable(tcp_server, control.paused_by_user, msg, "PAUSE=%u" ); return; }
 		if (starts_with(msg, "MODE" )) { recv_variable(tcp_server, control.tar_mode      , msg, "MODE=%u"  ); return; }
 		if (starts_with(msg, "USER" )) { recv_vector  (tcp_server, control.usr_params    , msg, "USER%u=%f"); return; }
+
+		if (starts_with(msg, "CSLGF")) { recv_variable(tcp_server, control.csl_settings.gf, msg, "CSLGF=%f"); return; }
+		if (starts_with(msg, "CSLGI")) { recv_variable(tcp_server, control.csl_settings.gi, msg, "CSLGI=%f"); return; }
 
 		if (msg == "paused") { send_variable(tcp_server, control.paused_by_user, "paused");    return; }
 		if (msg == "SoC"   ) { send_variable(tcp_server, robot.status.SoC      , "SoC");       return; }

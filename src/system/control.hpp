@@ -43,6 +43,7 @@ class FlatcatControl {
 public:
 
 	bool paused_by_user = false;
+	bool voicemode      = true;
 
 	FlatcatRobot&             robot;
 	FlatcatSettings const&    settings;
@@ -53,6 +54,9 @@ public:
 	std::vector<float> csl_tar_mode = {0.0f, 0.0f, 0.0f};
 	std::vector<float> csl_cur_mode = {0.0f, 0.0f, 0.0f};
 
+	struct csl_settings_t {
+		float gf,gi;
+	} csl_settings;
 
 	FlatcatControl(FlatcatRobot& robot, FlatcatSettings const& settings)
 	: robot(robot)
@@ -60,77 +64,80 @@ public:
 	, usr_params()
 	, cur_mode(ControlMode_t::none)
 	, tar_mode(ControlMode_t::none)
+	, csl_settings()
 	{
 
-        /* CSL settings */
-        for (unsigned i = 0; i < robot.get_number_of_joints(); ++i) {
-            robot.motorcord[i].set_voltage_limit(settings.motor_voltage_limit);
-            robot.motorcord[i].set_pwm_frequency(settings.motor_pwm_frequency);
-            robot.motorcord[i].set_disable_position_limits(-0.9,0.9);
-            //robot.motorcord[i].set_csl_limits(-0.5,0.5);
+		/* CSL settings */
+		for (unsigned i = 0; i < robot.get_number_of_joints(); ++i) {
+			robot.motorcord[i].set_voltage_limit(settings.motor_voltage_limit);
+			robot.motorcord[i].set_pwm_frequency(settings.motor_pwm_frequency);
+			robot.motorcord[i].set_disable_position_limits(-0.9,0.9); //=off, range is +/-0.6
+			robot.motorcord[i].set_csl_limits(-0.35,-0.60,+0.35,+0.60);
 
-            robot.motorcord[i].set_target_csl_fb(settings.motor_csl_param_gf);
-            robot.motorcord[i].set_target_csl_gain(settings.motor_csl_param_gi);
-            robot.motorcord[i].set_target_csl_mode(constants::csl_release_mode);
-            robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
-        }
+			robot.motorcord[i].set_target_csl_fb(settings.motor_csl_param_gf);
+			robot.motorcord[i].set_target_csl_gain(settings.motor_csl_param_gi);
+			robot.motorcord[i].set_target_csl_mode(constants::csl_release_mode);
+			robot.motorcord[i].set_stall_trig_vel(settings.motor_csl_stalltrigvel);
+			robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
+		}
 
-        /* set battery active level to maximum */
-        robot.battery.set_voltage_limit(1.0);
-    }
+		/* set battery active level to maximum */
+		robot.battery.set_voltage_limit(1.0);
 
-    void execute_cycle(void) { /*not implemented yet*/ }
+		csl_settings.gf = settings.motor_csl_param_gf;
+		csl_settings.gi = settings.motor_csl_param_gi;
+	}
 
-    void set_modes(float head, float body, float tail)
-    {
-        csl_tar_mode[0] = head;
-        csl_tar_mode[1] = body;
-        csl_tar_mode[2] = tail;
-    }
+	void execute_cycle(void) { /*not implemented yet*/ }
+
+	void set_modes(float head, float body, float tail)
+	{
+		csl_tar_mode[0] = head;
+		csl_tar_mode[1] = body;
+		csl_tar_mode[2] = tail;
+	}
 
 	void disable_motors(void) {
 		for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i)
 			robot.motorcord[i].disable();
 	}
 
-    void set_resting_mode(void) {
-        for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i) {
-            robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
-            float mode = robot.motorcord[i].get_csl().get_mode();
-		    mode += 0.01*(constants::csl_release_mode - mode);
-            csl_cur_mode[i] = mode;
-		    robot.motorcord[i].set_target_csl_mode(mode); // release mode
-        }
-    }
-
-    void set_active_mode(void) {
-        for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i) {
+	void set_resting_mode(void) {
+		for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i) {
 			robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
-            float mode = robot.motorcord[i].get_csl().get_mode();
-            mode += 0.01*(1.0/*csl_tar_mode[i]*/ - mode);
-            csl_cur_mode[i] = mode;
+			float mode = robot.motorcord[i].get_csl().get_mode();
+			mode += 0.01*(constants::csl_release_mode - mode);
+			csl_cur_mode[i] = mode;
+			robot.motorcord[i].set_target_csl_mode(mode); // release mode
+		}
+	}
+
+	void set_active_mode(void) {
+		for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i) {
+			robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
+			float mode = robot.motorcord[i].get_csl().get_mode();
+			mode += 0.01*(1.0/*csl_tar_mode[i]*/ - mode);
+			csl_cur_mode[i] = mode;
 			robot.motorcord[i].set_target_csl_mode(mode); // contraction mode
 		}
-    }
+	}
 
-    void set_motor_voice(void) {
-        /* set tones for all motors */
-	    for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i)
-        if (robot.motorcord[i].is_active())
-	    {
-/*TODO:
-			auto const& data = robot.motorcord[i].get_data();
-
-
-		    if (csl_cur_mode[i] > .9
-		    and fabs(data.output_voltage) > 0.01
-		    and fabs(data.output_voltage) < 0.02)
-			    m.set_pwm_frequency(tonetable[3*i+2]);
-		    else {
-			    m.set_pwm_frequency(settings.motor_pwm_frequency-i*1000);
-            }*/
-	    }
-    }
+	void set_motor_voice(void) {
+		/* set tones for all motors */
+		for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i)
+		{
+			auto& mot = robot.motorcord[i];
+			if (mot.is_active()) {
+				auto const& data = mot.get_data();
+				if (voicemode and csl_cur_mode[i] > .9
+					and std::abs(data.output_voltage) > 0.01
+					and std::abs(data.output_voltage) < 0.02 )
+					mot.set_pwm_frequency(tonetable[3*i+2]);
+				else
+					mot.set_pwm_frequency(settings.motor_pwm_frequency-i*1000);
+			}
+		}
+	}
 
 };
 

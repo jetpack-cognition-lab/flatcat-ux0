@@ -87,43 +87,43 @@ public:
 	, button()
 	{
 
-        if (std::experimental::filesystem::exists(settings.save_folder)) {
-            if (settings.clear_state) {
-                wrn_msg("Overriding state: %s", settings.save_state_name.c_str());
-                save(settings.save_folder);
+		if (std::experimental::filesystem::exists(settings.save_folder)) {
+			if (settings.clear_state) {
+				wrn_msg("Overriding state: %s", settings.save_state_name.c_str());
+				save(settings.save_folder);
 
-            } else
-                load(settings.save_folder);
-        }
-        else {
-            basic::make_directory(settings.save_folder.c_str());
-            save(settings.save_folder);
-        }
+			} else
+				load(settings.save_folder);
+		}
+		else {
+			basic::make_directory(settings.save_folder.c_str());
+			save(settings.save_folder);
+		}
 
-        if (logger.is_enabled())
-            logger.log("Time_ms_____ Statusflags_____ TL S Ubat_ Ubus_%s", motors_log.header().c_str());
+		if (logger.is_enabled())
+			logger.log("Time_ms_____ Statusflags_____ TL S Ubat_ Ubus_%s", motors_log.header().c_str());
 
-		if (settings.initial_pause) control.paused_by_user = true;
+		control.paused_by_user = settings.initial_pause;
+		control.voicemode = (settings.voicemode > 0);
+	}
 
-    }
+	void finish() {
+		exitflag.enable();
+		sts_msg("bb flat");
+	};
 
-    void finish() {
-        exitflag.enable();
-        sts_msg("bb flat");
-    };
+	bool execute_cycle();
+	void learning_cycle(void);
 
-    bool execute_cycle();
-    void learning_cycle(void);
+	void save(std::string f) {
+		sts_msg("Saving state: %s", settings.save_state_name.c_str());
+		learning.save(f);
+	}
 
-    void save(std::string f) {
-        sts_msg("Saving state: %s", settings.save_state_name.c_str());
-        learning.save(f);
-    }
-
-    void load(std::string f) {
-        sts_msg("Loading state: %s", settings.save_state_name.c_str());
-        learning.load(f);
-    }
+	void load(std::string f) {
+		sts_msg("Loading state: %s", settings.save_state_name.c_str());
+		learning.load(f);
+	}
 
 private:
 	FlatcatSettings             settings;
@@ -143,7 +143,7 @@ private:
 
 
 	unsigned long cycles = 0;
-	unsigned remaining_time_us = 0; // TODO move
+	unsigned remaining_time_us = 0;
 
 };
 

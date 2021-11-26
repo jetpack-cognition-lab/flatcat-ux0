@@ -1,6 +1,5 @@
 #include "./ux0_serial.h"
 
-
 static GlobalFlag exitflag;
 
 void
@@ -13,10 +12,11 @@ signal_terminate_handler(int signum)
 
 /* TODO: features
 	+ adjust CSL
+	+ find bug in voice mode
 	+ set voltage level lower according to battery life
 	+ buzz for button press (in booted mode)
 	+ can we detect the fur?
-	+ version number, compile date
+	+ increase button shutdown duration by 1 sec
 */
 
 namespace supreme {
@@ -49,6 +49,10 @@ MainApplication::execute_cycle(void)
 		learning.enabled = false;
 		if (not com.is_connected())
 			timer_shutdown.start();
+		else {
+			timer_shutdown.stop(); // don't shutdown if tcp client is still connected
+			timer_shutdown.reset();
+		}
 	}
 	else {
 		robot.set_bus_voltage(settings.normed_active_bus_voltage);
@@ -95,8 +99,8 @@ MainApplication::execute_cycle(void)
 	}
 
 	/* shutdown */
-	bool is_shutdown_signaled = status.ttlive < 10;
-	if (robot.battery.is_active() and (is_shutdown_signaled or status.Ubat < 2.7)) {
+	const bool is_shutdown_signaled = robot.is_shutdown_signaled();
+	if (is_shutdown_signaled or robot.is_powerfail()) {
 		robot.state = FlatcatRobot::FlatcatState_t::halting;
 		sts_msg("Shutdown flatcat due to %s", is_shutdown_signaled ? "BMS notified shutdown" : "unexpected power fail");
 		sts_msg("Last measurements: Ubat=%4.2f Ubus=%4.2f T=%02u F=%s"
@@ -108,16 +112,17 @@ MainApplication::execute_cycle(void)
 
 	remaining_time_us = 0;
 	while(!timer_mainloop.check_if_timed_out_and_restart()) {
-		usleep(100);
-		remaining_time_us += 100; //TODO log this?
+		usleep(50);
+		remaining_time_us += 50; //TODO log this?
 	}
 
 	return true;
 }
 
-
-
 } /* namespace supreme */
+
+#define XSTR(x) #x
+#define STR(x) XSTR(x)
 
 int main(int argc, char* argv[])
 {
@@ -125,9 +130,9 @@ int main(int argc, char* argv[])
 	srand((unsigned) time(NULL));
 	signal(SIGINT, signal_terminate_handler);
 
-	// handle version switch before initializing app
+	/* handle version switch before initializing app */
 	if(supreme::cmdOptionExists(argv, argv+argc, "-v")) {
-		sts_msg("flatcat-ux0 version %d", 10);
+		sts_msg("%s version: %s", argv[0], STR(__COMPILETIMESTAMP__));
 		return EXIT_SUCCESS;
 	}
 

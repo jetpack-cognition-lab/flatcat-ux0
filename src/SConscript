@@ -19,7 +19,6 @@ cppflags = ['-O2', '-Wall', '-Wextra', '-Wno-psabi', '-Wfatal-errors']
 # c++ only flags
 cxxflags = ['-std=c++11']
 
-
 cpppaths = [ '.'
            , '../../framework/src/'
            , '../../simloidTCP/src/'
@@ -27,6 +26,13 @@ cpppaths = [ '.'
            , '../src/'
            , '../src/system/'
            ]
+
+# compile time for version number
+from datetime import datetime
+dt = datetime.now()
+version = dt.strftime("%Y-%m-%d %H:%M:%S")
+
+env.Append(CPPDEFINES=[ '__COMPILETIMESTAMP__={}'.format(version)])
 
 env.Program( '../ux0_serial'
            , LIBS=['framework', 'pthread', 'stdc++fs']
@@ -36,4 +42,3 @@ env.Program( '../ux0_serial'
            , CPPFLAGS = cppflags
            , CXXFLAGS = cxxflags
            )
-
