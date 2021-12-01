@@ -24,6 +24,23 @@ namespace supreme {
 bool
 MainApplication::execute_cycle(void)
 {
+
+	if (learning.is_surprised()) learning.timer_boredom.reset();
+	else learning.timer_surprise.reset();
+
+	/* if flatcat is bored, start self-exploration */
+	if (learning.timer_boredom.is_timed_out()) {
+		learning.enabled = true;
+		control.contraction_only = false;
+	}
+
+	/* if flatcat is constantly surprised (by the user),
+	   keep doing contraction-only */
+	if (learning.timer_surprise.is_timed_out()) {
+		learning.enabled = false;
+		control.contraction_only = true;
+	}
+
 	robot.execute_cycle();
 	auto const& status = robot.get_status();
 
@@ -31,12 +48,14 @@ MainApplication::execute_cycle(void)
 	control.paused_by_user = button.execute_cycle(robot.is_button_pressed(), control.paused_by_user);
 
 	/* print on terminal each second */
-	if (cycles % 100 == 0)
-		sts_msg("Ub%4.2f Uc%4.2f Um%4.2f I%5.1f X%02u S=%u E%u T%u F=%s %s C=%3.1f %u"
+	if (settings.terminal_diag and cycles % 100 == 0)
+		sts_msg("Ub%4.2f Uc%4.2f Um%4.2f I%5.1f X%02u S%u E%u T%u F%s %s C%3.1f %4u %s %s"
 		       , status.Ubat, status.Ubus, status.Umot, status.Ilim, status.ttlive, status.state
 		       , status.motorcord.errors, status.motorcord.timeouts
 		       , status.flag_str.c_str(), robot.is_resting()? "RES" : "ACT"
-		       , control.csl_cur_mode[0], remaining_time_us);
+		       , control.csl_cur_mode[0], remaining_time_us
+		       , learning.is_surprised()? "~" : "="
+		       , control.contraction_only? "." : ":");
 
 	/* set tones for all motors */
 	control.set_motor_voice();
@@ -77,7 +96,7 @@ MainApplication::execute_cycle(void)
 
 	++cycles;
 
-	/* data logging */
+	/* data logging TODO: add em current et al.*/
 	if ((cycles % settings.cycles_log == 0) and logger.is_enabled())
 		logger.log("%12llu %s %02u %u %5.3f %5.3f%s"
 		          , watch.get_current_time_ms()
@@ -85,12 +104,13 @@ MainApplication::execute_cycle(void)
 		          , status.Ubat, status.Ubus, motors_log.log());
 
 
-	if (cycles % settings.cycles_nextfile == 0) // each hour
+	if (cycles % settings.cycles_nextfile == 0) // a new file each hour
 		logger.next();
 
 	if (cycles % settings.learning_save_cycles == 0)
-		save(settings.save_folder); // save learning data
+		save(settings.save_folder, settings.terminal_diag); // save learning data
 
+	/* shutdown scenarios */
 	if (timer_shutdown.is_timed_out()) {
 		sts_msg("Exceeded standby time of %u minutes.\n"
 		        "Sending shutdown request to Energy Module."
@@ -98,11 +118,13 @@ MainApplication::execute_cycle(void)
 		robot.battery.disable();
 	}
 
-	/* shutdown */
-	const bool is_shutdown_signaled = robot.is_shutdown_signaled();
-	if (is_shutdown_signaled or robot.is_powerfail()) {
+	if (control.deep_sleep_user_req) { robot.battery.disable(); }
+
+	if (robot.is_shutdown_signaled() or robot.is_powerfail())
+	{
 		robot.state = FlatcatRobot::FlatcatState_t::halting;
-		sts_msg("Shutdown flatcat due to %s", is_shutdown_signaled ? "BMS notified shutdown" : "unexpected power fail");
+		sts_msg("Shutdown flatcat: %s", robot.is_shutdown_signaled() ? "Energymodule has notified regular shutdown."
+		                                                             : "Unexpected power fail!" );
 		sts_msg("Last measurements: Ubat=%4.2f Ubus=%4.2f T=%02u F=%s"
 		       , status.Ubat, status.Ubus, status.ttlive, status.flag_str.c_str());
 		control.disable_motors();
@@ -110,6 +132,7 @@ MainApplication::execute_cycle(void)
 		return false;
 	}
 
+	/* process load estimation */
 	remaining_time_us = 0;
 	while(!timer_mainloop.check_if_timed_out_and_restart()) {
 		usleep(50);

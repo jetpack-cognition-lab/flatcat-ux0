@@ -1,6 +1,8 @@
 #ifndef FLATCAT_CONTROL_HPP
 #define FLATCAT_CONTROL_HPP
 
+#include <common/timer.h>
+
 #include <control/jointcontrol.h>
 #include <control/controlmixer.h>
 #include <control/control_vector.h>
@@ -44,6 +46,11 @@ public:
 
 	bool paused_by_user = false;
 	bool voicemode      = true;
+
+	bool contraction_only = true;
+
+	/* sleep requested by user */
+	bool deep_sleep_user_req = false;
 
 	FlatcatRobot&             robot;
 	FlatcatSettings const&    settings;
@@ -116,11 +123,12 @@ public:
 		for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i) {
 			robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
 			float mode = robot.motorcord[i].get_csl().get_mode();
-			mode += 0.01*(1.0/*csl_tar_mode[i]*/ - mode);
+			mode += 0.01*((contraction_only ? 1.0 : csl_tar_mode[i]) - mode);
 			csl_cur_mode[i] = mode;
 			robot.motorcord[i].set_target_csl_mode(mode); // contraction mode
 		}
 	}
+
 
 	void set_motor_voice(void) {
 		/* set tones for all motors */

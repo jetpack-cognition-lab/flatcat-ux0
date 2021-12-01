@@ -1,6 +1,8 @@
 #ifndef FLATCAT_LEARNING_HPP
 #define FLATCAT_LEARNING_HPP
 
+#include <common/timer.h>
+
 #include <learning/gmes.h>
 #include <learning/sarsa.h>
 #include <learning/reward.h>
@@ -28,13 +30,21 @@ public:
 	Policy_Selector                 policy_selector;
 	learning::Eigenzeit             eigenzeit;
 
-    bool enabled = true;
+	SimpleTimer                     timer_surprise,
+	                                timer_boredom;
 
+	bool enabled = true;
+
+	/* experimental */
+	float learning_progress_avg = 0.f;
+	float learning_progress_var = 0.f;
+
+	const float eta = 0.0001; // iir lowpass filter coeff
 
 	FlatcatLearning( FlatcatRobot const& robot
                    , FlatcatControl& control
                    , FlatcatSettings const& settings)
-	: actions(control)
+	: actions(control, settings)
 	, reward()
 	, gmes_joint_group( robot.get_joints()
 	                  , settings.gmes.number_of_experts
@@ -56,6 +66,8 @@ public:
 	, agent(super_layer.payload, reward, epsilon_greedy, actions.get_number_of_actions(), settings.sarsa_learning_rates)
 	, policy_selector(agent, reward.get_number_of_policies(), /*random_policy_mode = */true, settings.trial_time_s)
 	, eigenzeit(super_layer.gmes, settings.eigenzeit_steps)
+	, timer_surprise(constants::us_per_sec*settings.time_of_surprise_s, /*enable=*/true)
+	, timer_boredom (constants::us_per_sec*settings.time_of_boredom_s , /*enable=*/true)
 	{
 		reward.add_intrinsic_rewards(gmes_joint_group, super_layer);
 	}
@@ -76,6 +88,15 @@ public:
 		if (eigenzeit.has_progressed())
 			reward.clear_aggregations();
 
+		learning_progress_avg = (1.f - eta) * learning_progress_avg
+		                      + eta  * super_layer.get_learning_progress();
+
+		learning_progress_var = (1.f - eta) * learning_progress_var
+		                      + eta * std::abs(super_layer.get_learning_progress() - learning_progress_avg);
+	}
+
+	bool is_surprised(void) const {
+		return (learning_progress_avg+learning_progress_var) < super_layer.get_learning_progress();
 	}
 
 	void save(std::string f) {

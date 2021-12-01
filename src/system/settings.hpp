@@ -31,6 +31,8 @@ namespace defaults {
 	const unsigned motor_pwm_frequency = 22500;
 
 	const unsigned time_to_shutdown_min = 15; // 15 minutes
+	const unsigned time_of_surprise_s = 5;
+	const unsigned time_of_boredom_s = 30;
 
 	const unsigned voicemode = 1;
 }
@@ -63,7 +65,11 @@ public:
 	float voltage_regenerate_lo;
 	float voltage_regenerate_hi;
 	float voltage_emergency_shutdown;
+
+	/* timer settings */
 	unsigned time_to_shutdown_min;
+	unsigned time_of_surprise_s;
+	unsigned time_of_boredom_s;
 
 	/* CSL motor control */
 	float motor_voltage_limit;
@@ -88,6 +94,7 @@ public:
 	bool clear_state;
 
 	bool initial_pause = false;
+	bool terminal_diag = false;
 
 	/* gmes */
 	struct GMES_Settings_t {
@@ -104,6 +111,8 @@ public:
 	, voltage_regenerate_lo (read_float("voltage_regenerate_lo"  , defaults::voltage_regenerate_lo   ))
 	, voltage_regenerate_hi (read_float("voltage_regenerate_hi"  , defaults::voltage_regenerate_hi   ))
 	, time_to_shutdown_min  (read_uint ("time_to_shutdown_min"   , defaults::time_to_shutdown_min    ))
+	, time_of_surprise_s    (read_uint ("time_of_surprise_s"     , defaults::time_of_surprise_s      ))
+	, time_of_boredom_s     (read_uint ("time_of_boredom_s"      , defaults::time_of_boredom_s       ))
 	, motor_voltage_limit   (read_float("motor_voltage_limit"    , defaults::motor_voltage_limit     ))
 	, motor_csl_param_gf    (read_float("motor_csl_param_gf"     , defaults::motor_csl_param_gf      ))
 	, motor_csl_param_gi    (read_float("motor_csl_param_gi"     , defaults::motor_csl_param_gi      ))
@@ -114,6 +123,7 @@ public:
 	, save_state_name       (read_string_option(argc, argv, "-n", "--name", "default"                ))
 	, clear_state           (read_option_flag  (argc, argv, "-c", "--clear"                          ))
 	, initial_pause         (read_option_flag  (argc, argv, "-p", "--pause"                          ))
+	, terminal_diag         (read_option_flag  (argc, argv, "-d", "--diag"                           ))
 	{
 		save_folder += save_state_name + "/";
 

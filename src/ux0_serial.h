@@ -115,8 +115,8 @@ public:
 	bool execute_cycle();
 	void learning_cycle(void);
 
-	void save(std::string f) {
-		sts_msg("Saving state: %s", settings.save_state_name.c_str());
+	void save(std::string f, bool log_status = true) {
+		if (log_status) sts_msg("Saving state: %s", settings.save_state_name.c_str());
 		learning.save(f);
 	}
 
@@ -132,7 +132,10 @@ private:
 	/* robot baseline */
 	FlatcatRobot                robot;
 	FlatcatControl              control;
-	SimpleTimer                 timer_mainloop, timer_shutdown;
+
+	SimpleTimer                 timer_mainloop,
+	                            timer_shutdown;
+
 	Motor_Log                   motors_log;
 	Datalog                     logger;
 	FlatcatLearning             learning;

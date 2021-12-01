@@ -73,6 +73,7 @@ public:
         sts_add("Waiting for UDP communication thread to join.");
         udp_thread.join(); sts_msg("DONE.");
 
+        /**TODO send byebye to clients */
         sts_add("Waiting for TCP communication thread to join.");
         tcp_thread.join(); sts_msg("DONE.");
     }
@@ -135,8 +136,6 @@ public:
             ;
         }
 
-        /* TODO: energy module data */
-
         /* mirror controls */
         auto const& c = control;
         sendbuffer
@@ -147,11 +146,12 @@ public:
         .add(reserved32)
         .add(float(control.csl_settings.gf))
         .add(float(control.csl_settings.gi))
-        .add(reserved64)
+        .add(static_cast<float  >(learning.learning_progress_avg))
+        .add(static_cast<float  >(learning.learning_progress_var))
         .add(static_cast<float  >(learning.super_layer.gmes.get_learning_progress()))
         .add(static_cast<uint8_t>(learning.super_layer.gmes.get_number_of_experts()))
-        .add(reserved_8)
-        .add(reserved_8);
+        .add(learning.timer_surprise.get_elapsed_percent())
+        .add(learning.timer_boredom .get_elapsed_percent());
 
         sendbuffer.add_checksum();
     }
@@ -165,12 +165,19 @@ public:
 		if (starts_with(msg, "MODE" )) { recv_variable(tcp_server, control.tar_mode      , msg, "MODE=%u"  ); return; }
 		if (starts_with(msg, "USER" )) { recv_vector  (tcp_server, control.usr_params    , msg, "USER%u=%f"); return; }
 
+		if (msg == "SLEEP") {
+			control.deep_sleep_user_req = true;
+			sts_msg("client requests for deep sleep");
+			return;
+		}
+
 		if (starts_with(msg, "CSLGF")) { recv_variable(tcp_server, control.csl_settings.gf, msg, "CSLGF=%f"); return; }
 		if (starts_with(msg, "CSLGI")) { recv_variable(tcp_server, control.csl_settings.gi, msg, "CSLGI=%f"); return; }
 
 		if (msg == "paused") { send_variable(tcp_server, control.paused_by_user, "paused");    return; }
 		if (msg == "SoC"   ) { send_variable(tcp_server, robot.status.SoC      , "SoC");       return; }
 		if (msg == "flags" ) { send_variable(tcp_server, robot.status.flags    , "flags");     return; }
+
 
 		if (msg == "HELLO" ) { sts_msg("client says hello"); acknowledge(tcp_server); return; }
 
