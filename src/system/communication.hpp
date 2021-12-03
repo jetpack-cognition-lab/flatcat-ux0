@@ -142,7 +142,6 @@ public:
         .add(c.paused_by_user)
         .add(reserved_8)
         .add(reserved_8)
-        .add(reserved_8)
         .add(reserved32)
         .add(float(control.csl_settings.gf))
         .add(float(control.csl_settings.gi))
@@ -150,6 +149,7 @@ public:
         .add(static_cast<float  >(learning.learning_progress_var))
         .add(static_cast<float  >(learning.super_layer.gmes.get_learning_progress()))
         .add(static_cast<uint8_t>(learning.super_layer.gmes.get_number_of_experts()))
+        .add(static_cast<uint8_t>(learning.super_layer.gmes.get_winner()))
         .add(learning.timer_surprise.get_elapsed_percent())
         .add(learning.timer_boredom .get_elapsed_percent());
 
@@ -214,7 +214,7 @@ public:
                 else
                     usleep(1000);
             }
-
+            tcp_server.send_message("GOODBYE\n");
             tcp_server.close_connection();
             tcp_connected = false;
         }

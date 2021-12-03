@@ -80,7 +80,7 @@ public:
 			robot.motorcord[i].set_pwm_frequency(settings.motor_pwm_frequency);
 			robot.motorcord[i].set_disable_position_limits(-0.9,0.9); //=off, range is +/-0.6
 			robot.motorcord[i].set_csl_limits(-0.35,-0.60,+0.35,+0.60);
-
+			robot.motorcord[i].set_csl_noise_level(0.005);
 			robot.motorcord[i].set_target_csl_fb(settings.motor_csl_param_gf);
 			robot.motorcord[i].set_target_csl_gain(settings.motor_csl_param_gi);
 			robot.motorcord[i].set_target_csl_mode(constants::csl_release_mode);
@@ -128,7 +128,6 @@ public:
 			robot.motorcord[i].set_target_csl_mode(mode); // contraction mode
 		}
 	}
-
 
 	void set_motor_voice(void) {
 		/* set tones for all motors */

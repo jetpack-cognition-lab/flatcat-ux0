@@ -16,14 +16,16 @@ class FlatcatJointSpace : public sensor_vector
 {
 public:
     FlatcatJointSpace(const robots::Joint_Model& joint)
-    : sensor_vector(5)
+    : sensor_vector(7)
     {
-        sts_msg("Creating Flatcat Joint Space");
-        sensors.emplace_back("[1] angle sin", [&joint](){ return +sin(M_PI*joint.s_ang); });
-        sensors.emplace_back("[2] angle cos", [&joint](){ return -cos(M_PI*joint.s_ang); });
-        sensors.emplace_back("[3] torque"   , [&joint](){ return 4*joint.motor.get();    });//don't even think of removing that
-        sensors.emplace_back("[4] velocity" , [&joint](){ return joint.s_vel; });
-        sensors.emplace_back("[5] voltage"  , [&joint](){ return joint.s_vol; }); //TODO check, is this the motor measured voltage?
+        sts_msg("Creating flatcat joint space.");
+        sensors.emplace_back("[1] angle sin"  , [&joint](){ return +sin(M_PI*joint.s_ang); });
+        sensors.emplace_back("[2] angle cos"  , [&joint](){ return -cos(M_PI*joint.s_ang); });
+        sensors.emplace_back("[3] torque"     , [&joint](){ return 4*joint.motor.get();    });
+        sensors.emplace_back("[4] velocity"   , [&joint](){ return joint.s_vel; });
+        sensors.emplace_back("[5] voltage"    , [&joint](){ return joint.s_vol; });
+        sensors.emplace_back("[6] current"    , [&joint](){ return joint.s_cur; });
+        sensors.emplace_back("[7] temperature", [&joint](){ return joint.s_tmp; });
     }
 };
 
@@ -62,28 +64,10 @@ public:
     Expert_Vector                expert;
     GMES                         gmes;
 
-    //friend class GMES_Joint_Graphics;
-
     void save(std::string f) { expert.save(f); }
     void load(std::string f) { expert.load(f); }
 };
 
-/*
-class GMES_Joint_Graphics : public Graphics_Interface {
-    const GMES_Joint& gmes_joint;
-    GMES_Graphics     gmes_graphics;
-public:
-    GMES_Joint_Graphics(const GMES_Joint& gmes_joint)
-    : gmes_joint(gmes_joint)
-    , gmes_graphics(gmes_joint.gmes, gmes_joint.sensors, 200)
-    {}
-
-    void execute_cycle(uint64_t cycle) { gmes_graphics.execute_cycle(cycle); }
-    void draw(const pref& p) const { gmes_graphics.draw(p); }
-
-    void update_on_load(void) { gmes_graphics.update_on_load(); }
-};
-*/
 
 class GMES_Joint_Group : public learning::Learning_Machine_Interface {
 public:
@@ -146,40 +130,8 @@ private:
     VectorN                 group_activations;
     double                  learning_progress = 0.0;
 
-   // friend class GMES_Joint_Group_Graphics;
 };
 
-/*class GMES_Joint_Group_Graphics : public Graphics_Interface {
-    const GMES_Joint_Group&          gmes_joint_group;
-    std::vector<GMES_Joint_Graphics> group_graphics;
-public:
-    GMES_Joint_Group_Graphics(const GMES_Joint_Group& gmes_joint_group)
-    : gmes_joint_group(gmes_joint_group)
-    , group_graphics()
-    {
-        const float width = 2.0/gmes_joint_group.number_of_gmes_joints;
-        group_graphics.reserve(gmes_joint_group.number_of_gmes_joints);
-        for (std::size_t i = 0; i < gmes_joint_group.number_of_gmes_joints; ++i) {
-            group_graphics.emplace_back(gmes_joint_group.group[i]);//, ((i%2==0)? -1 : 1)*width, 1.0 - (i/2)*width - 0.5*width, width);
-            group_graphics.back().set_position(((i%2==0)? -1 : 1)*width/2, 1.0 - (i/2)*width - 0.5*width)
-                                 .set_scale(width);
-        }
-    }
-
-    void execute_cycle(uint64_t cycle) {
-        for (std::size_t i = 0; i < group_graphics.size(); ++i)
-            group_graphics[i].execute_cycle(cycle);
-    }
-    void draw(const pref& p) const {
-        for (std::size_t i = 0; i < group_graphics.size(); ++i)
-            group_graphics[i].drawing(p);
-    }
-    void update_on_load(void) {
-        for (std::size_t i = 0; i < group_graphics.size(); ++i)
-            group_graphics[i].update_on_load();
-    }
-};
-*/
 
 class GMES_Layer : public learning::Learning_Machine_Interface {
 public:

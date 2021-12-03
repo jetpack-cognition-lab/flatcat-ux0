@@ -30,6 +30,9 @@ namespace defaults {
 	const float motor_csl_stalltrigvel = 0.05f;
 	const unsigned motor_pwm_frequency = 22500;
 
+	const unsigned motor_temperature_off = 55; // °C
+	const unsigned motor_temperature_on  = 51; //
+
 	const unsigned time_to_shutdown_min = 15; // 15 minutes
 	const unsigned time_of_surprise_s = 5;
 	const unsigned time_of_boredom_s = 30;
@@ -78,6 +81,9 @@ public:
 	float motor_csl_stalltrigvel;
 	unsigned motor_pwm_frequency;
 
+	unsigned motor_temperature_off;
+	unsigned motor_temperature_on;
+
 	VectorN joint_offsets;
 
 	bool voicemode = true;
@@ -118,6 +124,8 @@ public:
 	, motor_csl_param_gi    (read_float("motor_csl_param_gi"     , defaults::motor_csl_param_gi      ))
 	, motor_csl_stalltrigvel(read_float("motor_csl_stalltrigvel" , defaults::motor_csl_stalltrigvel  ))
 	, motor_pwm_frequency   (read_uint ("motor_pwm_frequency"    , defaults::motor_pwm_frequency     ))
+	, motor_temperature_off (read_uint ("motor_temperature_off"  , defaults::motor_temperature_off   ))
+	, motor_temperature_on  (read_uint ("motor_temperature_on"   , defaults::motor_temperature_on    ))
 	, joint_offsets         (read_vec  ("joint_offsets"          , defaults::joint_offsets           ))
 	, voicemode             (read_uint ("voicemode"              , defaults::voicemode               ))
 	, save_state_name       (read_string_option(argc, argv, "-n", "--name", "default"                ))
@@ -128,6 +136,9 @@ public:
 		save_folder += save_state_name + "/";
 
 		sts_msg("Done loading flatcat settings");
+
+		if (motor_temperature_off < motor_temperature_on)
+			wrn_msg("Motor temperature protection is OFF");
 	}
 };
 

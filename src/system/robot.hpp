@@ -30,6 +30,9 @@ namespace constants {
 	const std::array<int16_t, num_joints> dir = { +1, +1, +1};
 	const float position_scale = 270.0/360.0;
 
+	const float max_bat_voltage = 4.2f;
+	const float min_bat_voltage = 3.0f;
+
 	/* simple SoC estimation from open battery voltage */
 	const std::array<SoC_t,13> SoC_table = {{{ 4.2, 100.00 },
 	                                         { 4.1,  96.48 },
@@ -71,6 +74,7 @@ public: //TODO undo "all public"
 		float Ilim = 0.0f;
 		float Imot = 0.0f;
 		float SoC  = 50.f;
+		float Tmot = 20.f;
 		uint8_t ttlive = 10;
 		uint8_t state = 0;
 		uint16_t flags = 0;
@@ -80,6 +84,9 @@ public: //TODO undo "all public"
 			unsigned errors = 0;
 			unsigned timeouts = 0;
 		} motorcord;
+
+		bool motor_temperature_critical = false;
+
 	} status;
 
 	enum StatusBits : uint8_t
@@ -200,7 +207,8 @@ public:
 			j.s_ang = m.get_data().position;
 			j.s_vel = m.get_data().velocity_lpf;
 			j.s_vol = m.get_data().voltage_supply/constants::voltage_norm_V; // normalized to 1=6V
-			//TODO: current, temp,
+			j.s_cur = m.get_data().current/2.f; //TODO current max
+			j.s_tmp = m.get_data().temperature/100.0; //TODO temp max value
 		}
 
 		/**TODO accelerometer
@@ -266,6 +274,10 @@ private:
 		             std::min( motorcord[1].get_data().voltage_supply
 		                     , motorcord[2].get_data().voltage_supply ));
 
+		float Tmot = std::max( motorcord[0].get_data().temperature,
+		             std::max( motorcord[1].get_data().temperature
+		                     , motorcord[2].get_data().temperature ));
+
 		/* get energymodule's data */
 		auto const& dat = battery.get_data().raw_recv;
 
@@ -288,14 +300,38 @@ private:
 		status.Ubat = 0.99f * status.Ubat + 0.01f * Ubat;
 		status.Imot = 0.99f * status.Imot + 0.01f * Imot;
 		status.Ilim = 0.99f * status.Ilim + 0.01f * Ilim;
-		uint8_t soci= round(clip(4.2f - status.Ubat, 0.0f, 1.2f) * 10);
-		status.SoC  = constants::SoC_table[soci].soc;
+		status.Tmot = 0.99f * status.Tmot + 0.01f * Tmot;
+
+		status.SoC  = get_state_of_charge_from_voltage(status.Ubat);
 
 		status.ttlive   = dat[6];
 		status.state    = dat[7];
 		status.flags    = dat[8]*256 + dat[9];
 		status.flag_str = std::bitset<sizeof(status.flags) * 8>(status.flags).to_string();
-    }
+
+		/* motor temperature critical flag with hysteresis */
+		if (status.Tmot > settings.motor_temperature_off) status.motor_temperature_critical = true;
+		if (status.Tmot < settings.motor_temperature_on ) status.motor_temperature_critical = false;
+	}
+
+	float get_state_of_charge_from_voltage(float bat_voltage) {
+		const float ub = clip(bat_voltage, constants::min_bat_voltage
+		                                 , constants::max_bat_voltage ); // 3.0 .. 4.2V
+		const float ubd = (constants::max_bat_voltage - ub) * 10; // 0.0 .. 1.2V -> 0.0 .. 12.0
+
+		const uint8_t i0 = clip(floor(ubd), 0, constants::SoC_table.size()-1);
+		const uint8_t i1 = clip(ceil(ubd) , 0, constants::SoC_table.size()-1);
+
+		const float top = constants::SoC_table[i1].soc;
+		const float bot = constants::SoC_table[i0].soc;
+
+		float rem = ub - constants::SoC_table[i0].vol;
+		float tot = constants::SoC_table[i1].vol
+		          - constants::SoC_table[i0].vol; // eg = 0.1
+
+		float p = (tot != 0.f) ? clip(rem/tot, 0.f, 1.f) : 0.f;
+		return p * (top - bot) + bot;
+	}
 
 };
 

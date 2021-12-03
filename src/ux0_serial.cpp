@@ -16,7 +16,6 @@ signal_terminate_handler(int signum)
 	+ set voltage level lower according to battery life
 	+ buzz for button press (in booted mode)
 	+ can we detect the fur?
-	+ increase button shutdown duration by 1 sec
 */
 
 namespace supreme {
@@ -61,7 +60,7 @@ MainApplication::execute_cycle(void)
 	control.set_motor_voice();
 
 	/* check charger connected or paused -> resting with standby bus power */
-	if (robot.is_charger_connected() or control.paused_by_user) {
+	if (robot.is_charger_connected() or control.paused_by_user or robot.status.motor_temperature_critical) {
 		robot.set_bus_voltage(settings.normed_resting_bus_voltage);
 		control.disable_motors();
 		robot.state = FlatcatRobot::FlatcatState_t::resting;
