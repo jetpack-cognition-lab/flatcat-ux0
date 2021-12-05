@@ -181,7 +181,7 @@ public:
 
 		if (msg == "HELLO" ) { sts_msg("client says hello"); acknowledge(tcp_server); return; }
 
-		dbg_msg("unknown msg: %s", msg.c_str());
+		dbg_msg("unknown msg: '%s'", msg.c_str());
 	}
 
 
@@ -206,6 +206,8 @@ public:
 
             while(!exitflag.status()) {
                 msg = tcp_server.get_next_line();
+		if (!msg.empty() && msg[msg.size() - 1] == '\r')
+		  msg.erase(msg.size() - 1);
                 if (msg == "EXIT") {
                     sts_msg("Client requested to close connection.");
                     break;
