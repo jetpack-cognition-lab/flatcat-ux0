@@ -216,7 +216,7 @@ public:
                 else
                     usleep(1000);
             }
-            tcp_server.send_message("GOODBYE\n");
+            if (tcp_connected) tcp_server.send_message("GOODBYE\n");
             tcp_server.close_connection();
             tcp_connected = false;
         }
