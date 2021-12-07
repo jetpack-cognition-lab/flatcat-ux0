@@ -87,6 +87,8 @@ public:
 	VectorN joint_offsets;
 
 	bool voicemode = true;
+	const float vm_beg = 0.005;
+	const float vm_end = 0.025;
 
 	VectorN sarsa_learning_rates = {0.05, 0.05, 0.005, 0.005};
 	uint64_t trial_time_s = 60;

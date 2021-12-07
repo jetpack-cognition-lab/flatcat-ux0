@@ -65,6 +65,8 @@ public:
 		float gf,gi;
 	} csl_settings;
 
+	std::vector<float> motor_tones;
+
 	FlatcatControl(FlatcatRobot& robot, FlatcatSettings const& settings)
 	: robot(robot)
 	, settings(settings)
@@ -72,15 +74,24 @@ public:
 	, cur_mode(ControlMode_t::none)
 	, tar_mode(ControlMode_t::none)
 	, csl_settings()
+	, motor_tones()
 	{
+		/* B-flat blues scale */
+		unsigned bt = 2; // base tone Bb (B flat)
+		motor_tones.emplace_back(tonetable[bt + 0]); // Bb base tone
+		motor_tones.emplace_back(tonetable[bt + 3]); // Db minor third
+		motor_tones.emplace_back(tonetable[bt + 5]); // Eb perfect forth
+		motor_tones.emplace_back(tonetable[bt + 6]); // E  diminished fifth
+		motor_tones.emplace_back(tonetable[bt + 7]); // F  perfect fifth
+		motor_tones.emplace_back(tonetable[bt +10]); // Ab minor seventh
 
 		/* CSL settings */
 		for (unsigned i = 0; i < robot.get_number_of_joints(); ++i) {
 			robot.motorcord[i].set_voltage_limit(settings.motor_voltage_limit);
 			robot.motorcord[i].set_pwm_frequency(settings.motor_pwm_frequency);
 			robot.motorcord[i].set_disable_position_limits(-0.9,0.9); //=off, range is +/-0.6
-			robot.motorcord[i].set_csl_limits(-0.35,-0.60,+0.35,+0.60);
-			robot.motorcord[i].set_csl_noise_level(0.005);
+			robot.motorcord[i].set_csl_limits(-0.20,-0.40,+0.35,+0.60);
+			robot.motorcord[i].set_csl_noise_level(0.001);
 			robot.motorcord[i].set_target_csl_fb(settings.motor_csl_param_gf);
 			robot.motorcord[i].set_target_csl_gain(settings.motor_csl_param_gi);
 			robot.motorcord[i].set_target_csl_mode(constants::csl_release_mode);
@@ -134,12 +145,17 @@ public:
 		for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i)
 		{
 			auto& mot = robot.motorcord[i];
+			//printf("%u ",i);
 			if (mot.is_active()) {
 				auto const& data = mot.get_data();
-				if (voicemode and csl_cur_mode[i] > .9
-					and std::abs(data.output_voltage) > 0.01
-					and std::abs(data.output_voltage) < 0.02 )
-					mot.set_pwm_frequency(tonetable[3*i+2]);
+				if (voicemode and csl_cur_mode[i] > .5
+					and data.output_voltage > settings.vm_beg
+					and data.output_voltage < settings.vm_end )
+					mot.set_pwm_frequency(motor_tones.at(2*i));
+				else if (voicemode and csl_cur_mode[i] > .5
+						and data.output_voltage < -settings.vm_beg
+						and data.output_voltage > -settings.vm_end )
+						mot.set_pwm_frequency(motor_tones.at(2*i+1));
 				else
 					mot.set_pwm_frequency(settings.motor_pwm_frequency-i*1000);
 			}
