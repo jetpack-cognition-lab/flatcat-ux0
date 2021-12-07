@@ -206,8 +206,6 @@ public:
 
             while(!exitflag.status()) {
                 msg = tcp_server.get_next_line();
-		if (!msg.empty() && msg[msg.size() - 1] == '\r')
-		  msg.erase(msg.size() - 1);
                 if (msg == "EXIT") {
                     sts_msg("Client requested to close connection.");
                     break;
