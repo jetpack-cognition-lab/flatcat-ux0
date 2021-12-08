@@ -87,8 +87,8 @@ public:
 	VectorN joint_offsets;
 
 	bool voicemode = true;
-	const float vm_beg = 0.005;
-	const float vm_end = 0.025;
+	const float vm_beg = 0.01;
+	const float vm_end = 0.02;
 
 	VectorN sarsa_learning_rates = {0.05, 0.05, 0.005, 0.005};
 	uint64_t trial_time_s = 60;
@@ -111,6 +111,8 @@ public:
 		float joint_gmes_learning_rate = 100.0;
 		float local_learning_rate = 0.001;
 	} gmes;
+
+
 
 	FlatcatSettings(int argc, char **argv)
 	: Settings_Base         (argc, argv                          , defaults::settings_filename.c_str())

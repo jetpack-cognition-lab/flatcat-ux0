@@ -78,12 +78,13 @@ public:
 	{
 		/* B-flat blues scale */
 		unsigned bt = 2; // base tone Bb (B flat)
-		motor_tones.emplace_back(tonetable[bt + 0]); // Bb base tone
-		motor_tones.emplace_back(tonetable[bt + 3]); // Db minor third
-		motor_tones.emplace_back(tonetable[bt + 5]); // Eb perfect forth
-		motor_tones.emplace_back(tonetable[bt + 6]); // E  diminished fifth
-		motor_tones.emplace_back(tonetable[bt + 7]); // F  perfect fifth
-		motor_tones.emplace_back(tonetable[bt +10]); // Ab minor seventh
+		motor_tones.emplace_back(tonetable[bt +  0]); // Bb base tone
+		motor_tones.emplace_back(tonetable[bt +  3]); // Db minor third
+		motor_tones.emplace_back(tonetable[bt +  5]); // Eb perfect forth
+		//motor_tones.emplace_back(tonetable[bt +  6]); // E  diminished fifth (blue note)
+		motor_tones.emplace_back(tonetable[bt +  7]); // F  perfect fifth
+		motor_tones.emplace_back(tonetable[bt + 10]); // Ab minor seventh
+		motor_tones.emplace_back(tonetable[bt + 12]); // Bb octave
 
 		/* CSL settings */
 		for (unsigned i = 0; i < robot.get_number_of_joints(); ++i) {
