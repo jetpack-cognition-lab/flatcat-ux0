@@ -21,13 +21,13 @@ namespace defaults {
 
 	const float voltage_disable_motors = 4.70f; // h-bridges disable themselves at approx. 4V5
 	const float voltage_regenerate_lo  = 4.80f;
-	const float voltage_regenerate_hi  = 5.20f;
+	const float voltage_regenerate_hi  = 5.30f;
 	const float voltage_emergency_shutdown = 2.5f;
 
 	const float motor_voltage_limit = 0.5f; // in %
 	const float motor_csl_param_gf = 1.00f; // contraction deactivated, must be enabled via setting
 	const float motor_csl_param_gi = 1.5f;
-	const float motor_csl_stalltrigvel = 0.05f;
+	const float motor_csl_stalltrigvel = 0.01f;
 	const unsigned motor_pwm_frequency = 22500;
 
 	const unsigned motor_temperature_off = 55; // °C

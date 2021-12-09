@@ -12,8 +12,6 @@ signal_terminate_handler(int signum)
 
 /* TODO: features
 	+ adjust CSL
-	+ find bug in voice mode
-	+ set voltage level lower according to battery life
 	+ buzz for button press (in booted mode)
 	+ can we detect the fur?
 */
@@ -29,15 +27,15 @@ MainApplication::execute_cycle(void)
 
 	/* if flatcat is bored, start self-exploration */
 	if (learning.timer_boredom.is_timed_out()) {
-		learning.enabled = true;
-		control.contraction_only = false;
+		learning.override_action = false;
+		control.set_csl_proactive(false);
 	}
 
 	/* if flatcat is constantly surprised (by the user),
 	   keep doing contraction-only */
 	if (learning.timer_surprise.is_timed_out()) {
-		learning.enabled = false;
-		control.contraction_only = true;
+		learning.override_action = true;
+		control.set_csl_proactive(true);
 	}
 
 	robot.execute_cycle();
@@ -54,7 +52,7 @@ MainApplication::execute_cycle(void)
 		       , status.flag_str.c_str(), robot.is_resting()? "RES" : "ACT"
 		       , control.csl_cur_mode[0], remaining_time_us
 		       , learning.is_surprised()? "~" : "="
-		       , control.contraction_only? "." : ":");
+		       , learning.override_action? "!" : ".");
 
 	/* set tones for all motors */
 	control.set_motor_voice();

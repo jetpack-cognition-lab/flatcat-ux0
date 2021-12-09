@@ -140,8 +140,8 @@ public:
         auto const& c = control;
         sendbuffer
         .add(c.paused_by_user)
-        .add(reserved_8)
-        .add(reserved_8)
+        .add(static_cast<uint8_t>(learning.actions.get_number_of_actions()))
+        .add(static_cast<uint8_t>(learning.agent.get_current_action()))
         .add(reserved32)
         .add(float(control.csl_settings.gf))
         .add(float(control.csl_settings.gi))

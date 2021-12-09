@@ -34,6 +34,7 @@ public:
 	                                timer_boredom;
 
 	bool enabled = true;
+	bool override_action = true;
 
 	/* experimental */
 	float learning_progress_avg = 0.f;
@@ -52,7 +53,7 @@ public:
 	                  , settings.gmes.local_learning_rate
 	                  , settings.gmes.experience_size
 	                  )
-	, super_layer( 16
+	, super_layer( 32
 	             , gmes_joint_group.get_activations()
 	             , actions
 	             , reward.get_number_of_policies()
@@ -81,7 +82,8 @@ public:
 		policy_selector .execute_cycle();
 
 		if (enabled and eigenzeit.has_progressed()) {
-			agent.execute_cycle(super_layer.gmes.get_winner());
+			if (override_action) agent.execute_cycle(super_layer.gmes.get_winner(), /*default action=*/0);
+			else agent.execute_cycle(super_layer.gmes.get_winner());
 			actions.execute_cycle(agent); //note: must be processed after agent's step.
 		}
 

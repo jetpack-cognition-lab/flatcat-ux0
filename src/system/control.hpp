@@ -47,8 +47,6 @@ public:
 	bool paused_by_user = false;
 	bool voicemode      = true;
 
-	bool contraction_only = true;
-
 	/* sleep requested by user */
 	bool deep_sleep_user_req = false;
 
@@ -92,12 +90,15 @@ public:
 			robot.motorcord[i].set_pwm_frequency(settings.motor_pwm_frequency);
 			robot.motorcord[i].set_disable_position_limits(-0.9,0.9); //=off, range is +/-0.6
 			robot.motorcord[i].set_csl_limits(-0.20,-0.40,+0.35,+0.60);
-			robot.motorcord[i].set_csl_noise_level(0.001);
+			robot.motorcord[i].set_csl_noise_level(0.0);
 			robot.motorcord[i].set_target_csl_fb(settings.motor_csl_param_gf);
 			robot.motorcord[i].set_target_csl_gain(settings.motor_csl_param_gi);
 			robot.motorcord[i].set_target_csl_mode(constants::csl_release_mode);
-			robot.motorcord[i].set_stall_trig_vel(settings.motor_csl_stalltrigvel);
+			robot.motorcord[i].set_csl_stall_detect_rate(settings.motor_csl_stalltrigvel);
+			robot.motorcord[i].set_csl_angle_limits_rate(settings.motor_csl_stalltrigvel);
 			robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
+
+			robot.motorcord[i].set_csl().Umax = clip(settings.motor_voltage_limit,0,1);
 		}
 
 		/* set battery active level to maximum */
@@ -135,11 +136,17 @@ public:
 		for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i) {
 			robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
 			float mode = robot.motorcord[i].get_csl().get_mode();
-			mode += 0.01*((contraction_only ? 1.0 : csl_tar_mode[i]) - mode);
+			mode += 0.01*(csl_tar_mode[i] - mode);
 			csl_cur_mode[i] = mode;
 			robot.motorcord[i].set_target_csl_mode(mode); // contraction mode
 		}
 	}
+
+	void set_csl_proactive(bool enable) {
+		for (std::size_t i = 0; i < robot.get_number_of_joints(); ++i)
+			robot.motorcord[i].set_csl_noise_level(enable? 0.001f: 0.f);
+	}
+
 
 	void set_motor_voice(void) {
 		/* set tones for all motors */

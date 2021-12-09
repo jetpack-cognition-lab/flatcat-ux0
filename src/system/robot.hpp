@@ -249,7 +249,8 @@ public:
 	FlatcatStatus_t const& get_status(void) const { return status; }
 
 	bool is_charger_connected(void) const { return status.flags & (1 << StatusBits::charger_connected); }
-	bool is_button_pressed(void) const { return status.flags & (1 << StatusBits::button_pressed); }
+	bool is_button_pressed   (void) const { return status.flags & (1 << StatusBits::button_pressed); }
+	bool is_limiter_faulted  (void) const { return status.flags & (1 << StatusBits::limiter_fault); }
 
 	bool is_resting(void) const { return state == FlatcatState_t::resting; }
 
