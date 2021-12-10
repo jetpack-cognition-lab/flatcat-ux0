@@ -1,9 +1,30 @@
+# flatcat settings
+
+# user settings
+voicemode = 1
+time_to_shutdown_min = 15
+
+# network
 tcp_port = 7332
-motor_voltage_limit = {0.50}
+
+# energy
+voltage_disable_motors = {4.70}
+voltage_regenerate_lo = {4.80}
+voltage_regenerate_hi = {5.30}
+
+# behavior
+time_of_surprise_s = 5
+time_of_boredom_s = 30
+
+# overtemp
+motor_temperature_off = 55
+motor_temperature_on = 51
+
+# WARNING: CSL settings
+# Better do not change unless
+# you know what you are doing!
+motor_voltage_limit = {0.5}
 motor_csl_param_gf = {1.02}
 motor_csl_param_gi = {3.25}
-
-
-
-
+motor_csl_stalltrigvel = {0.01}
 

@@ -86,19 +86,19 @@ public:
 
 		/* CSL settings */
 		for (unsigned i = 0; i < robot.get_number_of_joints(); ++i) {
-			robot.motorcord[i].set_voltage_limit(settings.motor_voltage_limit);
-			robot.motorcord[i].set_pwm_frequency(settings.motor_pwm_frequency);
-			robot.motorcord[i].set_disable_position_limits(-0.9,0.9); //=off, range is +/-0.6
-			robot.motorcord[i].set_csl_limits(-0.20,-0.40,+0.35,+0.60);
-			robot.motorcord[i].set_csl_noise_level(0.0);
-			robot.motorcord[i].set_target_csl_fb(settings.motor_csl_param_gf);
-			robot.motorcord[i].set_target_csl_gain(settings.motor_csl_param_gi);
-			robot.motorcord[i].set_target_csl_mode(constants::csl_release_mode);
-			robot.motorcord[i].set_csl_stall_detect_rate(settings.motor_csl_stalltrigvel);
-			robot.motorcord[i].set_csl_angle_limits_rate(settings.motor_csl_stalltrigvel);
-			robot.motorcord[i].set_controller_type(supreme::sensorimotor::Controller_t::csl);
-
-			robot.motorcord[i].set_csl().Umax = clip(settings.motor_voltage_limit,0,1);
+			auto& m = robot.motorcord[i];
+			m.set_voltage_limit(settings.motor_voltage_limit);
+			m.set_pwm_frequency(settings.motor_pwm_frequency);
+			m.set_disable_position_limits(-0.9,0.9); //=off, range is +/-0.6
+			m.set_csl_limits(-0.20,-0.40,+0.35,+0.60);
+			m.set_csl_noise_level(0.0);
+			m.set_target_csl_fb(settings.motor_csl_param_gf);
+			m.set_target_csl_gain(settings.motor_csl_param_gi);
+			m.set_target_csl_mode(constants::csl_release_mode);
+			m.set_csl_stall_detect_rate(settings.motor_csl_stalltrigvel);
+			m.set_csl_angle_limits_rate(settings.motor_csl_stalltrigvel);
+			m.set_controller_type(supreme::sensorimotor::Controller_t::csl);
+			m.set_csl().Umax = clip(settings.motor_voltage_limit,0,1);
 		}
 
 		/* set battery active level to maximum */
