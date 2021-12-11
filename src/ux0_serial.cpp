@@ -63,7 +63,7 @@ MainApplication::execute_cycle(void)
 		control.disable_motors();
 		robot.state = FlatcatRobot::FlatcatState_t::resting;
 		learning.enabled = false;
-		if (not com.is_connected())
+		if (!com.is_connected() and !robot.is_charger_connected())
 			timer_shutdown.start();
 		else {
 			timer_shutdown.stop(); // don't shutdown if tcp client is still connected
