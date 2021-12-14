@@ -89,7 +89,7 @@ MainApplication::execute_cycle(void)
 	}
 
 	learning.execute_cycle();
-	com.execute_cycle(cycles);
+	com.execute_cycle(cycles, remaining_time_us);
 
 	++cycles;
 
@@ -133,7 +133,7 @@ MainApplication::execute_cycle(void)
 	remaining_time_us = 0;
 	while(!timer_mainloop.check_if_timed_out_and_restart()) {
 		usleep(50);
-		remaining_time_us += 50; //TODO log this?
+		remaining_time_us += 50;
 	}
 
 	return true;

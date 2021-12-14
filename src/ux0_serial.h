@@ -77,8 +77,8 @@ public:
 	, exitflag(exitflag)
 	, robot(settings)
 	, control(robot, settings)
-	, timer_mainloop( static_cast<uint64_t>(constants::us_per_sec/settings.update_rate_Hz), /*enable=*/true )
-	, timer_shutdown(constants::us_per_sec*60*settings.time_to_shutdown_min)
+	, timer_mainloop(constants::us_per_sec/settings.update_rate_Hz, /*enable=*/true, constants::us_per_sec)
+	, timer_shutdown(constants::us_per_sec*60*settings.time_to_shutdown_min, false, constants::us_per_sec)
 	, motors_log(robot.motorcord)
 	, logger(argc, argv)
 	, learning(robot, control, settings)
@@ -145,8 +145,8 @@ private:
 	ButtonPauseStatus           button;
 
 
-	unsigned long cycles = 0;
-	unsigned remaining_time_us = 0;
+	uint64_t cycles = 0;
+	uint32_t remaining_time_us = 0;
 
 };
 

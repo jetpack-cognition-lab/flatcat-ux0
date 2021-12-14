@@ -67,8 +67,8 @@ public:
 	, agent(super_layer.payload, reward, epsilon_greedy, actions.get_number_of_actions(), settings.sarsa_learning_rates)
 	, policy_selector(agent, reward.get_number_of_policies(), /*random_policy_mode = */true, settings.trial_time_s)
 	, eigenzeit(super_layer.gmes, settings.eigenzeit_steps)
-	, timer_surprise(constants::us_per_sec*settings.time_of_surprise_s, /*enable=*/true)
-	, timer_boredom (constants::us_per_sec*settings.time_of_boredom_s , /*enable=*/true)
+	, timer_surprise(constants::us_per_sec*settings.time_of_surprise_s, /*enable=*/true, constants::us_per_sec)
+	, timer_boredom (constants::us_per_sec*settings.time_of_boredom_s , /*enable=*/true, constants::us_per_sec)
 	{
 		reward.add_intrinsic_rewards(gmes_joint_group, super_layer);
 	}
