@@ -95,7 +95,7 @@ MainApplication::execute_cycle(void)
 
 	/* data logging TODO: add em current et al.*/
 	if ((cycles % settings.cycles_log == 0) and logger.is_enabled())
-		logger.log("%12llu %s %02u %u %5.3f %5.3f%s"
+		logger.log("%12" PRIu64 " %s %02u %u %5.3f %5.3f%s"
 		          , watch.get_current_time_ms()
 		          , status.flag_str.c_str(), status.ttlive, status.state
 		          , status.Ubat, status.Ubus, motors_log.log());

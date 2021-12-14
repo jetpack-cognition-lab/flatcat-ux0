@@ -1,8 +1,8 @@
 #ifndef FLATCAT_LEARNING_HPP
 #define FLATCAT_LEARNING_HPP
 
+/* framework */
 #include <common/timer.h>
-
 #include <learning/gmes.h>
 #include <learning/sarsa.h>
 #include <learning/reward.h>
@@ -11,9 +11,10 @@
 #include <learning/action_selection.h>
 #include <learning/epsilon_greedy.h>
 
-#include "gmes_joint_group.hpp"
-#include "reward.hpp"
-#include "actions.hpp"
+/* flatcat ux0 */
+#include <system/actions.hpp>
+#include <learning/gmes_joint_group.hpp>
+#include <learning/reward.hpp>
 
 namespace supreme {
 

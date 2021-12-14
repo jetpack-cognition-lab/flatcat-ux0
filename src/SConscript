@@ -1,11 +1,11 @@
 """
  +----------------------------------+
  | Supreme Machines/Jetpack         |
- | Flatcat simple CSL experiment    |
+ | flatcat ux0                      |
  | Build Script                     |
  | Matthias Kubisch                 |
  | kubisch@informatik.hu-berlin.de  |
- | Oct 2020                         |
+ | Oct 2020 - Dec 2021              |
  +----------------------------------+
 
 """
@@ -14,17 +14,15 @@ Import('env')
 src_files = [ 'ux0_serial.cpp' ]
 
 # common flags
-cppflags = ['-O2', '-Wall', '-Wextra', '-Wno-psabi', '-Wfatal-errors']
+cppflags = ['-O2', '-Wall', '-Wextra', '-Wno-psabi', '-Wfatal-errors', '-pedantic']
 
 # c++ only flags
 cxxflags = ['-std=c++11']
 
 cpppaths = [ '.'
            , '../../framework/src/'
-           , '../../simloidTCP/src/'
            , '../../libsensorimotor/src/'
            , '../src/'
-           , '../src/system/'
            ]
 
 # compile time for version number
@@ -42,3 +40,4 @@ env.Program( '../ux0_serial'
            , CPPFLAGS = cppflags
            , CXXFLAGS = cxxflags
            )
+

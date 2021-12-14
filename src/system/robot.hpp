@@ -16,7 +16,7 @@
 #include <sensorimotor.hpp>
 
 /* flatcat_ux0 */
-#include "system/settings.hpp"
+#include <system/settings.hpp>
 
 namespace supreme {
 

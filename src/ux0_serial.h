@@ -10,6 +10,8 @@
 #include <signal.h>
 #include <bitset>
 #include <experimental/filesystem>
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 
 /* framework */
 #include <common/log_messages.h>
@@ -25,14 +27,14 @@
 #include <sensorimotor.hpp>
 
 /* flatcat */
-#include "system/robot.hpp"
-#include "system/control.hpp"
-#include "system/settings.hpp"
-#include "system/actions.hpp"
-#include "system/logging.hpp"
-#include "system/communication.hpp"
+#include <system/robot.hpp>
+#include <system/control.hpp>
+#include <system/settings.hpp>
+#include <system/actions.hpp>
+#include <system/logging.hpp>
+#include <system/communication.hpp>
 
-#include "learning/learning.hpp"
+#include <learning/learning.hpp>
 
 
 namespace supreme {

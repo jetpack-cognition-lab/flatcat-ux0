@@ -9,7 +9,8 @@ namespace supreme {
 
 	inline void acknowledge(network::Socket_Server& socket) {
 		//dbg_msg("sending ACK");
-		socket.send_message("ACK\n"); };
+		socket.send_message("ACK\n");
+	}
 
 	template <typename T>
 	bool recv_variable(network::Socket_Server& socket, T& result, std::string const& msg, const char* keystr) {

@@ -7,9 +7,8 @@
 #include <common/socket_server.h>
 #include <common/log_messages.h>
 
-#include "../system/parse_commands.hpp"
-#include "../system/handle_commands.hpp"
-#include "../learning/learning.hpp"
+#include <system/parse_commands.hpp>
+#include <learning/learning.hpp>
 
 namespace supreme {
 

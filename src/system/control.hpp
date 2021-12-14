@@ -10,10 +10,10 @@
 #include <controller/csl_control.hpp>
 #include <controller/pid_control.hpp>
 
-#include "system/robot.hpp"
-#include "system/tones.hpp"
-#include "system/settings.hpp"
-#include "system/neural_osc.hpp"
+#include <system/robot.hpp>
+#include <system/tones.hpp>
+#include <system/settings.hpp>
+#include <system/neural_osc.hpp>
 
 namespace supreme {
 

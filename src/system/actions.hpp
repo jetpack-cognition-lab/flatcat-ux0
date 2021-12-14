@@ -4,8 +4,8 @@
 #include <learning/action_module.h>
 #include <learning/reinforcement_learning.h>
 
-#include "settings.hpp"
-#include "control.hpp"
+#include <system/settings.hpp>
+#include <system/control.hpp>
 
 namespace supreme {
 
