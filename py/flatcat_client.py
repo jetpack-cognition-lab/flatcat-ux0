@@ -1,17 +1,22 @@
 #!/usr/bin/python
 
-import sys, socket, time, argparse
+import sys, socket, time, argparse, logging
 
 # globals
 port     = 7332
 bufsize  = 4096
 MSG = '\033[93m' #orange terminal color
-
+logger = logging.getLogger()
 
 class Flatcat:
     def __init__(self, address, port):
-        self.sock = socket.socket()
+        print(f'{self.__class__.__name__} init socket')
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print(f'{self.__class__.__name__} socket connect {address}:{port}')
         self.sock.connect((address, port))
+        print(f'{self.__class__.__name__} init params')
+        print(f' local socket {self.sock.getsockname()}')
+        print(f'remote socket {self.sock.getpeername()}')
         self.soc = 50
         self.flags = 0
         self.cycle = 0
@@ -37,7 +42,8 @@ class Flatcat:
     def receive(self):
         try:
             msg=self.sock.recv(bufsize)
-            #print("received <{0}>".format(msg))
+            msg = msg.decode('utf8')
+            print(f"received <{msg}>")
             return msg
         except KeyboardInterrupt:
             print("aborted")
@@ -45,7 +51,7 @@ class Flatcat:
 
     def send(self, msg):
         #print("sending message: <{0}>".format(msg))
-        self.sock.send(msg)
+        self.sock.send(msg.encode('utf8'))
 
     def request_variable(self, keystr):
         cmd = keystr+"\n"
@@ -84,23 +90,29 @@ class Flatcat:
 def main(argv):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-a', '--address', default="")
-    parser.add_argument('-p', '--port', default=port)
+    parser.add_argument('-p', '--port', default=port, type=int)
     args = parser.parse_args()
 
     try:
         robot = Flatcat(args.address, args.port)
-    except:
+    except Exception as e:
+        print(f'Exception {e}')
         print(MSG + "No connection.\n")
         sys.exit()
 
     result = True
 
-    robot.send_command("HELLO\n")
-    robot.send_variable("PAUSE", 1) # disable robot
+    # logger.info(f'sending HELLO')
+    print(f'sending HELLO')
+    robot.send_command("HELLO")
+    # robot.send_variable("PAUSE", 1) # disable robot
 
     while (result):
         try:
-            result = robot.loop()
+            # result = robot.loop()
+            robot.send_command("HELLO")
+            time.sleep(1.0)
+            result = True
         except KeyboardInterrupt: # press CTRL + C to exit
             print(MSG + "Ctrl+C, Bye___")
             result = False

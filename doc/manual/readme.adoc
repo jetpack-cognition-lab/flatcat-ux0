@@ -28,7 +28,7 @@ image:./foto.jpg[width=100%, pdfwidth=100%]
 
 [sidebar]
 --
-_Hallo Welt!_ Willkommen im Handbuch Deiner _flatcat_. Dieses Dokument macht Dich mit den wichtigsten Funktionen Deines elektronischen Haustiers vertraut, erklärt den bevorzugten Umgang und gibt Hinweise zur Pflege und Wartung. s
+_Hallo Welt!_ Willkommen im Handbuch Deiner _flatcat_. Dieses Dokument macht Dich mit den wichtigsten Funktionen Deines elektronischen Haustiers vertraut, erklärt den bevorzugten Umgang und gibt Hinweise zur Pflege und Wartung.
 --
 
 toc::[]
@@ -41,6 +41,25 @@ Eine _flatcat_ kann durchaus auch mal fester zupacken. Daher ist deine _flatcat_
 
 An Deiner _flatcat_ solltest du keine eigenmächtigen Reparaturen oder Modifikationen an der Mechanik oder Elektronik durchführen. Die wiederaufladbaren Batterien dürfen nicht eigenmächtig getauscht werden: Brandgefahr!
 
+== Inbetriebnahme
+
+Hurra, deine _flatcat_ ist angekommen \o/
+
+Im Paket findest du ein Körbchen das ca. so aussieht wie in Bild unten links zu sehen. Wenn du die Schlaufe öffnest und das Körbchen aufklappts, sollte es so wie rechts gezeigt aussehen
+
+image:./getting_started_basket.jpg[width=49%, pdfwidth=49%]
+image:./getting_started_basket_open.jpg[width=49%, pdfwidth=49%]
+
+Oben drauf liegt das USB-Ladegerät im kleinen Papierpäckchen. Darunter ist _flatcat_ in einer Schutzfolie eingewickelt. Wenn du _flatcat_ aus dem Körbchen genommen und aus der Folie ausgewickelt hast, musst du den Schutz des `START`-Knopfs entfernen. Suche den Aufkleber mit der Aufschrift `remove this seal`, wie im Bild unten ganz links, und in der Mitte zu sehen ist.
+
+image:./getting_started_seal.jpg[width=49%, pdfwidth=49%]
+image:./getting_started_seal_closeup.jpg[width=49%, pdfwidth=49%]
+
+Wenn du diesen Aufkleber entfernst, fällt ein kleines Teil mit ab, das während des Transports verhindert, dass der `START`-Knopf unbeabsichtigt gedrückt wird.
+
+image:./getting_started_seal_removed.jpg[width=49%, pdfwidth=49%]
+
+Jetzt ist deine _flatcat_ bereit für das erste Einschalten, Wow!
 
 == Funktionen
 
@@ -131,23 +150,40 @@ image:./change_batteries.jpg[width=49%, pdfwidth=49%]
 == Funkverbindung aufbauen
 [NOTE]
 ====
-Für den folgenden Schritt benötigst Du ein WLAN-fähiges Gerät, ein Smartphone, Tablet oder Notebook-Computer sowie einen zeitgemäßen Browser (Firefox, Chrome oder Ähnliches)._
+Für den folgenden Schritt benötigst Du ein WLAN-fähiges Gerät, ein Smartphone, Tablet oder Notebook-Computer sowie einen zeitgemäßen Browser (Firefox, Chrome oder Ähnliches). Am zuverlässigsten funktioniert es mit einem Notebook-Computer.
 ====
 
 Um das Funkmodul zu verbinden <<wake_up,wecke Deine _flatcat_ auf>>, falls noch nicht geschehen, und <<connect_charger, verbinde den Lade-Adapter>> an oder betätige kurz den `START`-Knopf um Deine _flatcat_ in den <<pause_mode, Ruhemodus>> zu versetzen.
 
 Auf diese Weise pausiert, öffnet Deine _flatcat_ nach kurzer Zeit einen Wifi-Accesspoint, sodass Du dich mit einem geeigneten Endgerät (Computer, Tablet oder Smartphone) zu Deiner _flatcat_ verbinden kannst.
 
-Der Name des neuen Accesspoints ist `flatcat00` wobei die `00` die <<serialno, Seriennummer>> Deiner persönlichen _flatcats_ ist. Das benötigte Wifi-Kennwort lautet: `flatcat***`
+Der Name des neuen Accesspoints ist `flatcat00` wobei die `00` die <<serialno, Seriennummer>> Deiner persönlichen _flatcats_ ist. Das benötigte Wifi-Kennwort lautet: `fl4tc4t*`
 
 [TIP]
 ====
 Die Seriennummer Deiner _flatcat_ ist auf der Unterseite des Kopf-Segments aufgedruckt. Dazu musst Du das <<remove_fur, Fell ausziehen>> und Deine _flatcat_ auf den Rücken legen.
 ====
 
-Ist die Verbindung zum Accesspoint aufgebaut kannst Du ein Browserfenster öffnen und die URL `https:\\flatcat00.local` eingeben. Kurz darauf öffnet sich die Web-Applikation.
+Ist die Verbindung zum Accesspoint aufgebaut, kannst Du ein Browserfenster öffnen und die URL `http://flatcat00.local` eingeben. Kurz darauf öffnet sich die Web-Applikation, die flatcat App.
 
-In dieser Web-Applikation kannst Du  Statusdaten wie z.B. Batterieladung einsehen, die <<update_software, Software aktualisieren>> oder <<settings, Einstellungen>> für Deine _flatcat_ vornehmen.
+image:./flatcat_app/2-app-loaded.jpg[width=49%, pdfwidth=49%]
+
+In der flatcat App kannst Du derzeit die <<update_software, Software aktualisieren>> oder <<settings, Einstellungen>> für Deine _flatcat_ vornehmen.
+
+[NOTE]
+====
+Wenn Deine _flatcat_ noch nicht mit dem Internet verbunden ist, kann es je nach verwendetem Browser ein bisschen dauern, bis die App geladen wird. Einfach ein bisschen Geduld haben und abwarten.
+
+Beim Eingeben der URL darauf achten, dass "http://" mitzutippen, manche Browser wollen sonst eine Suche starten.
+
+image:./flatcat_app/1-enter-location-detail.jpg[]
+
+Wenn gar nichts geht, ist Deine _flatcat_ auch über die IP Adresse `192.168.4.1` erreichbar.
+
+Wenn die App geladen ist, sieht die URL Zeile deines Browsers ca. so aus.
+
+image:./flatcat_app/2-app-loaded-detail.jpg[width=49%, pdfwidth=49%]
+==== 
 
 [NOTE]
 ====
@@ -155,18 +191,60 @@ Wenn Du den Lade-Adapter abziehst oder durch Drücken des `START`-Knopfes Dein _
 ====
 
 
-[#update_software]
-== Software aktualisieren
-_Für das Aktualisieren der Software muss eine Funkverbindung aufgebaut sein. Lesen Sie Abschnitt <<connect_wifi, Funkmodul verbinden>> um zu erfahren, wie eine Funkverbindung mit Deinem flatcat hergestellt werden kann._
-
-to be continued....
-
-
 [#settings]
 == Einstellungen vornehmen
-_Für das Ändern der Nutzereinstellungen muss eine Funkverbindung aufgebaut sein. Lesen Sie Abschnitt <<connect_wifi, Funkmodul verbinden>> um zu erfahren, wie eine Funkverbindung mit Deinem flatcat hergestellt werden kann._
+_Für das Ändern der Nutzereinstellungen muss eine Funkverbindung aufgebaut sein. Lies Abschnitt <<connect_wifi, Funkmodul verbinden>> um zu erfahren, wie eine Funkverbindung mit Deinem flatcat hergestellt werden kann._
 
-to be continued....
+=== WiFi konfigurieren
+
+[NOTE]
+====
+_flatcat_ ist auch ohne WiFi und ohne Verbindung zum Internet voll
+funktionsfähig. Selbst Software Updates können mit ein bisschen
+Handarbeit ohne direkte Verbindung zum Internet eingespielt
+werden. Die Update Funktion in der App ist an dieser Stelle als
+Komfortfunktion gedacht.
+====
+
+Um die Update Funktion in der App zu nutzen, muss deine _flatcat_ mit
+dem Internet verbunden sein. Dazu kannst du unter `Configure Wifi`
+
+image:./flatcat_app/3-app-loaded-bottom-wifi-detail.jpg[width=49%, pdfwidth=49%]
+
+die Einstellungen für dein Wifi eintragen, wie hier z.B. `jcl-one` und `secretPassword123`,
+
+image:./flatcat_app/4-configure-wifi-detail.jpg[width=49%, pdfwidth=49%]
+
+und dann den image:./flatcat_app/4-configure-wifi-detail-set-wifi-button.jpg[] Button klicken.
+
+Die App gibt leider noch kein Feedback über den Klick und den genauen
+Fortschritt aber im Hintergrund wird deine _flatcat_ bereits
+konfiguriert und meldet sich in deinem Wifi an.
+
+Am besten du wartest kurz und machst dann einen Reload der App im
+Browser. Wenn alles funktioniert hat, taucht `Configure Wifi`
+die Zeile `Connected Wifi:` auf und zeigt den Namen des Wifi an, mit
+dem _flatcat_ tatsächlich verbunden ist.
+
+image:./flatcat_app/5-configure-wifi-reloaded-detail.jpg[]
+
+[NOTE]
+====
+Ab jetzt funktioniert _flatcat_ als Router, d.h. du solltest
+wenn du mit _flatcat_ über ihren Access Point verbunden bist, mit
+deinem Gerät auch ins Internet kommen.
+
+Du dich mit deinem Gerät aber auch wieder direkt mit deinem Wifi
+verbinden und _flatcat_ sollte auch dort auf den Namen
+`flatcat00.local` hören, wobei `00` mit der Seriennummer deiner
+_flatcat_ zu ersetzen ist.
+
+====
+
+[#update_software]
+== Software aktualisieren
+_Für das Aktualisieren der Software muss eine Funkverbindung aufgebaut sein. Lies in Abschnitt <<connect_wifi, Funkmodul verbinden>> um zu erfahren, wie eine Funkverbindung mit Deiner flatcat hergestellt werden kann._
+
 
 
 [#cleaning]
