@@ -245,7 +245,21 @@ _flatcat_ zu ersetzen ist.
 == Software aktualisieren
 _Für das Aktualisieren der Software muss eine Funkverbindung aufgebaut sein. Lies in Abschnitt <<connect_wifi, Funkmodul verbinden>> um zu erfahren, wie eine Funkverbindung mit Deiner flatcat hergestellt werden kann._
 
+Für die Aktualisierung der Software ist der Abschnitt `Available Updates` verfügbar, siehe Bild.
 
+image:./flatcat_app/5-configure-wifi-reloaded-crop-updates.jpg[width=49%, pdfwidth=49%]
+
+Im Abschnitt darüber steht unter `Version` die installierte Versionsnummer, hier z.B. `20211221-165757` (die Version besteht aus dem Datum und der Uhrzeit, wann das Update bereitgestellt wurde).
+
+Im Aufklappmenu unter `Available Updates` sind alle verfügbaren Updates zu sehen und das aktuellste wird standardmäßig angezeigt. Wenn die angezeigte Version jünger ist als die installierte Version, lohnt es sich, das Update auszuführen.
+
+Zum Ausführen des Updates einfach den `download selected update`-Knopf klicken. Auch hier gibt es noch kein Feedback aber im Hintergrund wird das Update heruntergeladen, wenn deine _flatcat_ mit dem Internet verbunden ist.
+
+Einfach ein paar Sekunden warten und danach den `install selected update`-Knopf klicken. Auch hier wieder einfach ca. 1 Minute warten, bis das Update im Hintergrund fertig ausgeführt wurde.
+
+Nach dem Update _flatcat_ am besten neustarten, damit alle Funktionen vollständig neu geladen werden.
+
+Neustarten kannst du _flatcat_ durch ca. 3 Sekunden Drücken des `START`-Knopfs. Dadurch geht _flatcat_ in den `deep sleep` mode und alles wird heruntergefahren, siehe <<sleep_mode, Schlafmodus>>. Nach ca. 1 Minute _flatcat_ einfach wieder einschalten durch ca. 1-sekündiges Drücken des `START`-Knopfs.
 
 [#cleaning]
 == Reinigung
